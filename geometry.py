@@ -1,34 +1,61 @@
 
-
-class Wire(object):
-    """The core layer and unit of the peice. A wire represents a single square
-    of a grid that when chained with mirror versions on all four sides
-    generates the cairo pentagon
-
-    In the physical version, one wire measres 1.5 inches by 1.5 inches.
+class Point(object):
+    """The representation of a single cartesian coordinate on our 4 x 4 grid.
     """
-
-    def __init__(self, x1=0, y1=1, x2=4, y2=3, x3=1, y3=0, x4=3, y4=4):
-        self.x1 = x1
-        self.y1 = y1
-        self.x2 = x2
-        self.y2 = y2
-        self.x3 = x3
-        self.y3 = y3
-        self.x4 = x4
-        self.y4 = y4
-        self.pt1 = (x1, y1)
-        self.pt2 = (x2, y2)
-        self.pt3 = (x3, y3)
-        self.pt4 = (x4, y4)
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
 
     def __repr__(self):
-        return "W(pt1: {}, pt2: {}, pt3: {}, pt4: {})".format(
-            self.pt1, self.pt2, self.pt3, self.pt4)
+        return "P(x: {}, y: {})".format(self.x, self.y)
 
-    def return_mirror(self):
-        return Wire(self.y1, self.x1, self.y2, self.x2,
-                    self.y3, self.x3, self.y4, self.x4)
+    def mirror(self):
+        return Point(self.y, self.x)
+
+
+class Wire(object):
+    """The first layer and unit of the peice. A wire represents a single square
+    of a grid that when chained with mirror versions on all four sides
+    generates the cairo pentagon.
+
+    In the physical version, one wire measres 1.5 inches by 1.5 inches.
+
+    Arguments:
+        point1 (geometry.Point)
+        point2 (geometry.Point)
+        point3 (geometry.Point)
+        point4 (geometry.Point)
+    """
+
+    def __init__(self, point1, point2, point3, point4):
+        self._point1 = point1
+        self._point2 = point2
+        self._point3 = point3
+        self._point4 = point4
+
+    def __repr__(self):
+        return "W(first: {}, second: {}, third: {}, fourth: {})".format(
+            self.point1, self.point2, self.point3, self.point4)
+
+    @property
+    def point1(self):
+        return self._point1
+
+    @property
+    def point2(self):
+        return self._point2
+
+    @property
+    def point3(self):
+        return self._point3
+
+    @property
+    def point4(self):
+        return self._point4
+
+    def mirror(self):
+        return Wire(self.point4.mirror(), self.point3.mirror(),
+                    self.point2.mirror(), self.point1.mirror())
 
     def return_tile(self):
         return Tile(self)
@@ -74,7 +101,7 @@ class WireFrame(object):
             return row
         else:
             row.append(next_el)
-            next_el = next_el.return_mirror()
+            next_el = next_el.mirror()
             return self._fill_next(row, next_el)
 
     def _build_frame(self, initial_row=None):
@@ -103,19 +130,55 @@ class Tile(object):
     """
 
     def __init__(self, wire):
-        self.pt1 = wire.pt1
-        self.pt2 = wire.pt2
-        self.pt3 = wire.pt3
-        self.pt4 = wire.pt4
-        self.bottom_left = (0, 0)
-        self.top_left = (0, 4)
-        self.top_right = (4, 0)
-        self.bottom_right = (0, 4)
-        self.center = (2, 2)
+        self._point1 = wire.point1
+        self._point2 = wire.point2
+        self._point3 = wire.point3
+        self._point4 = wire.point4
+        self._bottom_left = Point(0, 0)
+        self._top_left = Point(0, 4)
+        self._top_right = Point(4, 0)
+        self._bottom_right = Point(0, 4)
+        self._center = Point(2, 2)
 
     def __repr__(self):
-        return ("T(polygon1: {}, polygon2: {}, polygon3: {}, polygon4: {})"
+        return ("T(first: {}, second: {}, third: {}, fourth: {})"
                 .format(*self.tile_coords))
+
+    @property
+    def point1(self):
+        return self._point1
+
+    @property
+    def point2(self):
+        return self._point2
+
+    @property
+    def point3(self):
+        return self._point3
+
+    @property
+    def point4(self):
+        return self._point4
+
+    @property
+    def bottom_left(self):
+        return self._bottom_left
+
+    @property
+    def top_left(self):
+        return self._top_left
+
+    @property
+    def top_right(self):
+        return self._top_right
+
+    @property
+    def bottom_right(self):
+        return self._bottom_right
+
+    @property
+    def center(self):
+        return self._center
 
     @property
     def tile_coords(self):
@@ -125,11 +188,10 @@ class Tile(object):
         """Returns a list of coordinates representing a 4 sided polygon and
         half of the pentagon tile."""
         return [
-            (self.pt1, self.top_left, self.pt2, self.center),
-            (self.pt2, self.top_right, self.pt3, self.center),
-            (self.pt3, self.bottom_right, self.pt4, self.center),
-            (self.pt4, self.bottom_left, self.pt1, self.center)
-        ]
+            (self.point1, self.top_left, self.point2, self.center),
+            (self.point2, self.top_right, self.point3, self.center),
+            (self.point3, self.bottom_right, self.point4, self.center),
+            (self.point4, self.bottom_left, self.point1, self.center)]
 
 
 class TileFrame(object):
@@ -143,15 +205,16 @@ class TileFrame(object):
     """
 
     def __init__(self, wireframe):
-        self.wireframe = wireframe
+        self._wireframe = wireframe
+        self._frame = self._translate_wireframe()
 
     @property
     def frame(self):
-        return self._translate_wireframe()
+        return self._frame
 
     def _translate_wireframe(self):
         frame = []
-        for i in range(self.wireframe.height - 1):
-            row = [wire.return_tile() for wire in self.wireframe.frame[i]]
+        for i in range(self._wireframe.height - 1):
+            row = [wire.return_tile() for wire in self._wireframe.frame[i]]
             frame.append(row)
         return frame
