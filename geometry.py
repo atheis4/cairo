@@ -27,11 +27,12 @@ class Wire(object):
         point4 (geometry.Point)
     """
 
-    def __init__(self, point1, point2, point3, point4):
+    def __init__(self, point1, point2, point3, point4, wire_type='a'):
         self._point1 = point1
         self._point2 = point2
         self._point3 = point3
         self._point4 = point4
+        self._wire_type = wire_type
 
     def __repr__(self):
         return "W(1. {}, 2. {}, 3. {}, 4. {})".format(
@@ -53,9 +54,15 @@ class Wire(object):
     def point4(self):
         return self._point4
 
+    @property
+    def wire_type(self):
+        return self._wire_type
+
     def mirror(self):
+        wire_type = 'b' if self.wire_type == 'a' else 'a'
         return Wire(self.point4.mirror(), self.point3.mirror(),
-                    self.point2.mirror(), self.point1.mirror())
+                    self.point2.mirror(), self.point1.mirror(),
+                    wire_type=wire_type)
 
     def return_tile(self):
         return Tile(self)
