@@ -34,7 +34,7 @@ class Wire(object):
         self._point4 = point4
 
     def __repr__(self):
-        return "W(first: {}, second: {}, third: {}, fourth: {})".format(
+        return "W(1. {}, 2. {}, 3. {}, 4. {})".format(
             self.point1, self.point2, self.point3, self.point4)
 
     @property
@@ -141,7 +141,7 @@ class Tile(object):
         self._center = Point(2, 2)
 
     def __repr__(self):
-        return ("T(first: {}, second: {}, third: {}, fourth: {})"
+        return ("T(1. {}, 2. {}, 3. {}, 4. {})"
                 .format(*self.tile_coords))
 
     @property
