@@ -146,10 +146,11 @@ class Tile(object):
         self._top_right = Point(4, 0)
         self._bottom_right = Point(0, 4)
         self._center = Point(2, 2)
+        self._tile_type = wire.wire_type
 
     def __repr__(self):
-        return ("T(1. {}, 2. {}, 3. {}, 4. {})"
-                .format(*self.tile_coords))
+        return ("T(1. {}, 2. {}, 3. {}, 4. {}, type: {type})"
+                .format(*self.tile_coords, type=self.tile_type))
 
     @property
     def point1(self):
@@ -186,6 +187,10 @@ class Tile(object):
     @property
     def center(self):
         return self._center
+
+    @property
+    def tile_type(self):
+        return self._tile_type
 
     @property
     def tile_coords(self):
