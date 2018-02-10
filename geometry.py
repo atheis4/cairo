@@ -35,8 +35,8 @@ class Wire(object):
         self._wire_type = wire_type
 
     def __repr__(self):
-        return "W(1. {}, 2. {}, 3. {}, 4. {})".format(
-            self.point1, self.point2, self.point3, self.point4)
+        return "W(1. {}, 2. {}, 3. {}, 4. {}, type: {})".format(
+            self.point1, self.point2, self.point3, self.point4, self.wire_type)
 
     @property
     def point1(self):
