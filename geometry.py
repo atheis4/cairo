@@ -143,7 +143,7 @@ class Tile(object):
         self._point4 = wire.point4
         self._bottom_left = Point(0, 0)
         self._top_left = Point(0, 4)
-        self._top_right = Point(4, 0)
+        self._top_right = Point(4, 4)
         self._bottom_right = Point(0, 4)
         self._center = Point(2, 2)
         self._tile_type = wire.wire_type
@@ -226,7 +226,7 @@ class TileFrame(object):
 
     def _translate_wireframe(self):
         frame = []
-        for i in range(self._wireframe.height - 1):
+        for i in range(self._wireframe.height):
             row = [wire.return_tile() for wire in self._wireframe.frame[i]]
             frame.append(row)
         return frame
