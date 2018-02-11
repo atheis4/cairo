@@ -230,3 +230,6 @@ class TileFrame(object):
             row = [wire.return_tile() for wire in self._wireframe.frame[i]]
             frame.append(row)
         return frame
+
+    def return_compliment_tile(self, tile):
+        # TODO:
