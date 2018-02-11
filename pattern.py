@@ -4,18 +4,30 @@ class Origin(object):
     coordinate on the wire_frame of the peice.
 
     Arguments:
-        coordinates (pattern.HourGlass)
-        rotation (int): default 1, 'clockwise'
-        positive_space (bool): does the origin represent positive or negative
-            space.
-        version_id (int): the version of spiral from the original work.
-            1: square spiral (originally A).
-            2:
-            3:
+        coordinates
     """
 
-    def __init__(self, coordinates, rotation=1, positive_space=True,
-                 version_id=1):
-        self.coordinates = coordinates
+    def __init__(self):
+        self._coordinates = coordinates
+
+
+class Spiral(object):
+
+    def __init__(self, rotation=1, positive=True):
         self._rotation = rotation
-        self._positive_space = positive_space
+        self._positive = positive
+
+    @property
+    def rotation(self):
+        return self._rotation
+
+    @property
+    def positive(self):
+        return self._positive
+
+
+class SquareSpiral(Spiral):
+    pass
+
+
+class
