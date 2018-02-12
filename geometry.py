@@ -137,14 +137,11 @@ class Tile(object):
     """
 
     def __init__(self, wire):
-        self._point1 = wire.point1
-        self._point2 = wire.point2
-        self._point3 = wire.point3
-        self._point4 = wire.point4
-        self._bottom_left = Point(0, 0)
-        self._top_left = Point(0, 4)
-        self._top_right = Point(4, 4)
-        self._bottom_right = Point(0, 4)
+        self._wire = wire
+        self._b_left = Point(0, 0)
+        self._t_left = Point(0, 4)
+        self._t_right = Point(4, 4)
+        self._b_right = Point(0, 4)
         self._center = Point(2, 2)
         self._tile_type = wire.wire_type
 
@@ -153,36 +150,20 @@ class Tile(object):
                 .format(*self.tile_coords, type=self.tile_type))
 
     @property
-    def point1(self):
-        return self._point1
+    def b_left(self):
+        return self._b_left
 
     @property
-    def point2(self):
-        return self._point2
+    def t_left(self):
+        return self._t_left
 
     @property
-    def point3(self):
-        return self._point3
+    def t_right(self):
+        return self._t_right
 
     @property
-    def point4(self):
-        return self._point4
-
-    @property
-    def bottom_left(self):
-        return self._bottom_left
-
-    @property
-    def top_left(self):
-        return self._top_left
-
-    @property
-    def top_right(self):
-        return self._top_right
-
-    @property
-    def bottom_right(self):
-        return self._bottom_right
+    def b_right(self):
+        return self._b_right
 
     @property
     def center(self):
@@ -200,10 +181,10 @@ class Tile(object):
         """Returns a list of coordinates representing a 4 sided polygon and
         half of the pentagon tile."""
         return [
-            (self.point1, self.top_left, self.point2, self.center),
-            (self.point2, self.top_right, self.point3, self.center),
-            (self.point3, self.bottom_right, self.point4, self.center),
-            (self.point4, self.bottom_left, self.point1, self.center)]
+            (self.wire.point1, self.t_left, self.wire.point2, self.center),
+            (self.wire.point2, self.t_right, self.wire.point3, self.center),
+            (self.wire.point3, self.b_right, self.wire.point4, self.center),
+            (self.wire.point4, self.b_left, self.wire.point1, self.center)]
 
 
 class TileFrame(object):
@@ -231,5 +212,6 @@ class TileFrame(object):
             frame.append(row)
         return frame
 
-    def return_compliment_tile(self, tile):
+    @classmethod
+    def return_compliment_tile(cls, tile):
         # TODO:
