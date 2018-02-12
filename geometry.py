@@ -179,7 +179,7 @@ class Tile(object):
 
     def _generate_polygons(self):
         """Returns a list of coordinates representing a 4 sided polygon and
-        half of the pentagon tile."""
+        half of a single pentagon tile."""
         return [
             (self.wire.point1, self.t_left, self.wire.point2, self.center),
             (self.wire.point2, self.t_right, self.wire.point3, self.center),
