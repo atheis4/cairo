@@ -1,7 +1,17 @@
 
+class Grid(object):
+    """The representation of the two dimensional container that the Points are
+    defined within."""
+
+    center = Point(2, 2)
+    b_left = Point(0, 0)
+    t_left = Point(0, 4)
+    t_right = Point(4, 4)
+    b_right = Poing(4, 0)
+
+
 class Point(object):
-    """The representation of a single cartesian coordinate on our 4 x 4 grid.
-    """
+    """A single cartesian coordinate on our 4 x 4 grid."""
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -11,6 +21,19 @@ class Point(object):
 
     def mirror(self):
         return Point(self.y, self.x)
+
+
+class Polygon(object):
+    """The atom of the tile concept.
+
+    Generated from four Points."""
+
+    def __init__(self, point1, point2, point3, point4, polygon_type):
+        self.point1 = point1
+        self.point2 = point2
+        self.point3 = point3
+        self.point4 = point4
+        self.polygon_type = polygon_type
 
 
 class Wire(object):
@@ -64,8 +87,16 @@ class Wire(object):
                     self.point2.mirror(), self.point1.mirror(),
                     wire_type=wire_type)
 
-    def return_tile(self):
-        return Tile(self)
+    def return_polygons(self, grid):
+        return [
+            Polygon(self.point1, grid.t_left, self.point2, grid.center,
+                    self.wire_type),
+            Polygon(self.point2, grid.t_right, self.point3, grid.center,
+                    self.wire_type),
+            Polygon(self.point3, grid.b_right, self.point4, grid.center,
+                    self.wire_type),
+            Polygon(self.point4, grid.b_left, self.point1, grid.center,
+                    self.wire_type)]
 
 
 class WireFrame(object):
@@ -127,24 +158,30 @@ class WireFrame(object):
 
 
 class Tile(object):
+
+    def __init__(self, polygon1, polygon2, polygon3, polygon4):
+        self.polygon1 = polygon1
+        self.polygon2 = polygon2
+        self.polygon3 = polygon3
+        self.polygon4 = polygon4
+
+
+class Tile(object):
     """The atom of the Tile concept.
 
-    Generated from a Wire object, this will contain the coordinates that trace
-    the polygons of the Tile for a single grid.
+    Generated from four Polygon objects, this will contain the coordinates that
+    trace the polygons of the Tile for a single grid.
 
     Arguments:
         wire (geometry.Wire)
     """
 
     def __init__(self, wire):
-        self._point1 = wire.point1
-        self._point2 = wire.point2
-        self._point3 = wire.point3
-        self._point4 = wire.point4
-        self._bottom_left = Point(0, 0)
-        self._top_left = Point(0, 4)
-        self._top_right = Point(4, 4)
-        self._bottom_right = Point(0, 4)
+        self._wire = wire
+        self._b_left = Point(0, 0)
+        self._t_left = Point(0, 4)
+        self._t_right = Point(4, 4)
+        self._b_right = Point(0, 4)
         self._center = Point(2, 2)
         self._tile_type = wire.wire_type
 
@@ -153,36 +190,20 @@ class Tile(object):
                 .format(*self.tile_coords, type=self.tile_type))
 
     @property
-    def point1(self):
-        return self._point1
+    def b_left(self):
+        return self._b_left
 
     @property
-    def point2(self):
-        return self._point2
+    def t_left(self):
+        return self._t_left
 
     @property
-    def point3(self):
-        return self._point3
+    def t_right(self):
+        return self._t_right
 
     @property
-    def point4(self):
-        return self._point4
-
-    @property
-    def bottom_left(self):
-        return self._bottom_left
-
-    @property
-    def top_left(self):
-        return self._top_left
-
-    @property
-    def top_right(self):
-        return self._top_right
-
-    @property
-    def bottom_right(self):
-        return self._bottom_right
+    def b_right(self):
+        return self._b_right
 
     @property
     def center(self):
@@ -198,12 +219,12 @@ class Tile(object):
 
     def _generate_polygons(self):
         """Returns a list of coordinates representing a 4 sided polygon and
-        half of the pentagon tile."""
+        half of a single pentagon tile."""
         return [
-            (self.point1, self.top_left, self.point2, self.center),
-            (self.point2, self.top_right, self.point3, self.center),
-            (self.point3, self.bottom_right, self.point4, self.center),
-            (self.point4, self.bottom_left, self.point1, self.center)]
+            (self.wire.point1, self.t_left, self.wire.point2, self.center),
+            (self.wire.point2, self.t_right, self.wire.point3, self.center),
+            (self.wire.point3, self.b_right, self.wire.point4, self.center),
+            (self.wire.point4, self.b_left, self.wire.point1, self.center)]
 
 
 class TileFrame(object):
@@ -231,5 +252,12 @@ class TileFrame(object):
             frame.append(row)
         return frame
 
-    def return_compliment_tile(self, tile):
+    @classmethod
+    def return_compliment_tile(cls, tile):
+        pass
         # TODO:
+
+
+class Pentagon(object):
+
+    def __init__(self, )
