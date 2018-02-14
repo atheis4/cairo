@@ -11,6 +11,10 @@ class Origin(object):
         self._coordinates = coordinates
 
 
+class Pivot(object):
+    pass
+
+
 class Spiral(object):
 
     def __init__(self, rotation=1, positive=True):
