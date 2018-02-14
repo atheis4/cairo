@@ -1,5 +1,7 @@
 
 class Grid(object):
+    """The representation of the two dimensional container that the Points are
+    defined within."""
 
     center = Point(2, 2)
     b_left = Point(0, 0)
