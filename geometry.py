@@ -1,4 +1,13 @@
 
+class Grid(object):
+
+    center = Point(2, 2)
+    b_left = Point(0, 0)
+    t_left = Point(0, 4)
+    t_right = Point(4, 4)
+    b_right = Poing(4, 0)
+
+
 class Point(object):
     """A single cartesian coordinate on our 4 x 4 grid."""
     def __init__(self, x, y):
@@ -10,6 +19,19 @@ class Point(object):
 
     def mirror(self):
         return Point(self.y, self.x)
+
+
+class Polygon(object):
+    """The atom of the tile concept.
+
+    Generated from four Points."""
+
+    def __init__(self, point1, point2, point3, point4, polygon_type):
+        self.point1 = point1
+        self.point2 = point2
+        self.point3 = point3
+        self.point4 = point4
+        self.polygon_type = polygon_type
 
 
 class Wire(object):
@@ -63,8 +85,16 @@ class Wire(object):
                     self.point2.mirror(), self.point1.mirror(),
                     wire_type=wire_type)
 
-    def return_tile(self):
-        return Tile(self)
+    def return_polygons(self, grid):
+        return [
+            Polygon(self.point1, grid.t_left, self.point2, grid.center,
+                    self.wire_type),
+            Polygon(self.point2, grid.t_right, self.point3, grid.center,
+                    self.wire_type),
+            Polygon(self.point3, grid.b_right, self.point4, grid.center,
+                    self.wire_type),
+            Polygon(self.point4, grid.b_left, self.point1, grid.center,
+                    self.wire_type)]
 
 
 class WireFrame(object):
@@ -123,18 +153,6 @@ class WireFrame(object):
             frame.append(next_row)
             next_row = self._fill_row(next_row[-1])
             return self._next_column(frame, next_row)
-
-
-class Polygon(object):
-    """The atom of the tile concept.
-
-    Generated from four Points."""
-
-    def __init__(self, point1, point2, point3, point4):
-        self.point1 = point1
-        self.point2 = point2
-        self.point3 = point3
-        self.point4 = point4
 
 
 class Tile(object):
