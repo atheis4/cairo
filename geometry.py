@@ -1,7 +1,6 @@
 
 class Point(object):
-    """The representation of a single cartesian coordinate on our 4 x 4 grid.
-    """
+    """A single cartesian coordinate on our 4 x 4 grid."""
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -126,11 +125,32 @@ class WireFrame(object):
             return self._next_column(frame, next_row)
 
 
+class Polygon(object):
+    """The atom of the tile concept.
+
+    Generated from four Points."""
+
+    def __init__(self, point1, point2, point3, point4):
+        self.point1 = point1
+        self.point2 = point2
+        self.point3 = point3
+        self.point4 = point4
+
+
+class Tile(object):
+
+    def __init__(self, polygon1, polygon2, polygon3, polygon4):
+        self.polygon1 = polygon1
+        self.polygon2 = polygon2
+        self.polygon3 = polygon3
+        self.polygon4 = polygon4
+
+
 class Tile(object):
     """The atom of the Tile concept.
 
-    Generated from a Wire object, this will contain the coordinates that trace
-    the polygons of the Tile for a single grid.
+    Generated from four Polygon objects, this will contain the coordinates that
+    trace the polygons of the Tile for a single grid.
 
     Arguments:
         wire (geometry.Wire)
@@ -214,4 +234,10 @@ class TileFrame(object):
 
     @classmethod
     def return_compliment_tile(cls, tile):
+        pass
         # TODO:
+
+
+class Pentagon(object):
+
+    def __init__(self, )
