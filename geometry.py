@@ -23,19 +23,6 @@ class Point(object):
         return Point(self.y, self.x)
 
 
-class Polygon(object):
-    """The atom of the tile concept.
-
-    Generated from four Points."""
-
-    def __init__(self, point1, point2, point3, point4, polygon_type):
-        self.point1 = point1
-        self.point2 = point2
-        self.point3 = point3
-        self.point4 = point4
-        self.polygon_type = polygon_type
-
-
 class Wire(object):
     """The first layer and unit of the peice. A wire represents a single square
     of a grid that when chained with mirror versions on all four sides
@@ -158,15 +145,6 @@ class WireFrame(object):
 
 
 class Tile(object):
-
-    def __init__(self, polygon1, polygon2, polygon3, polygon4):
-        self.polygon1 = polygon1
-        self.polygon2 = polygon2
-        self.polygon3 = polygon3
-        self.polygon4 = polygon4
-
-
-class Tile(object):
     """The atom of the Tile concept.
 
     Generated from four Polygon objects, this will contain the coordinates that
@@ -256,8 +234,3 @@ class TileFrame(object):
     def return_compliment_tile(cls, tile):
         pass
         # TODO:
-
-
-class Pentagon(object):
-
-    def __init__(self, )
