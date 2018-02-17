@@ -254,6 +254,3 @@ class Pentagon(object):
         self.column_width = column_height
         self.wire1 = wire1
         self.wire2 = wire2
-
-    def mirror(self):
-        return Pentagon()
