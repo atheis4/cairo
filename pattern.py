@@ -1,3 +1,25 @@
+"""
+Should I have a binary mode and a cartesian mode?
+
+Binary mode would track 8 data points:
+    r_inc: 0 for no increase, 1 for increase
+    r_dec: 0 for no decrease, 1 for decrease
+    c_inc: 0 for no increase, 1 for increase
+    c_dec: 0 for no decrease, 1 for decrease
+    r_h: 0 for no row height, 1 for row height
+    c_h: 0 for no column height, 1 for column height
+    t1: 0 for tile pattern A, 1 for tile pattern B
+    t2: 0 for tile pattern A, 1 for tile pattern B
+
+Cartesian mode would simplify the points to:
+    delta_r: -1, 0, or 1 for the change in the row index value
+    delta_c: -1, 0, or 1 for the change in the column index value
+    dimension: 0 for column height but no row height, 1 for row height and no
+        column height
+    t1: 0 for A, 1 for B
+"""
+
+
 import numpy as np
 
 
