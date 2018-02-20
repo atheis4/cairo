@@ -83,6 +83,9 @@ class Wire(object):
                     self.point1.mirror(),
                     wire_type=wire_type)
 
+    def return_tile(self, grid):
+        return Tile(self, grid)
+
 
 class WireFrame(object):
     """
@@ -155,8 +158,9 @@ class Tile(object):
         wire (geometry.Wire)
     """
 
-    def __init__(self, wire):
+    def __init__(self, wire, grid):
         self._wire = wire
+        self._grid = grid
 
     @property
     def tile_type(self):
@@ -181,10 +185,10 @@ class TileFrame(object):
     def frame(self):
         return self._frame
 
-    def _translate_wireframe(self):
+    def _translate_wireframe(self, grid):
         frame = []
         for i in range(self._wireframe.height):
-            row = [wire.return_tile() for wire in self._wireframe.frame[i]]
+            row = [wire.return_tile(grid) for wire in self._wireframe.frame[i]]
             frame.append(row)
         return frame
 
@@ -248,9 +252,25 @@ class Pentagon(object):
                  column_width,
                  wire1,
                  wire2):
-        self.row_index = row_index
-        self.column_index = column_index
-        self.row_height = row_height
-        self.column_width = column_height
-        self.wire1 = wire1
-        self.wire2 = wire2
+        self._row_index = row_index
+        self._column_index = column_index
+        self._row_height = row_height
+        self._column_width = column_height
+        self._wire1 = wire1
+        self._wire2 = wire2
+
+    @property
+    def row_index(self):
+        return self._row_index
+
+    @property
+    def column_index(self):
+        return self._column_index
+
+    @property
+    def row_height(self):
+        return self._row_height
+
+    @property
+    def column_width(self):
+        return self._column_width
