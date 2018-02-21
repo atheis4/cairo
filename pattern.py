@@ -23,6 +23,16 @@ Cartesian mode would simplify the points to:
 import numpy as np
 
 
+class Movement(object):
+    """.
+    """
+
+    def __init__(self, is_positive, is_negative, dimension):
+        self.is_positive = is_positive
+        self.is_negative = is_negative
+        self.dimension = dimension
+
+
 class Origin(object):
     """
     The origin object begins the spiral. It is defined by an hourglass
