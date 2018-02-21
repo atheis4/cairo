@@ -115,6 +115,9 @@ class Wire(object):
                     self.point1.mirror(),
                     wire_type=wire_type)
 
+    def return_tile(self, grid):
+        return Tile(self, grid)
+
 
 class WireFrame(object):
     """
