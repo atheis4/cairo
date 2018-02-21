@@ -1,10 +1,8 @@
 import numpy as np
 
-from geometry import Grid, Point, Wire, Tile, WireFrame, TileFrame
+from geometry import Block, Grid, Point, Wire, WireFrame
 
 
 grid = Grid()
-init_coords = np.array([[0, 1], [1, 4], [4, 3], [3, 0]])
-points = [Point(x=init_coords[i][0], y=init_coords[i][1]) for i in range(4)]
-init_wire = Wire(*points)
+init_wire = Wire(grid=grid, Point(0, 1), Point(1, 4), Point(4, 3), Point(3, 0))
 wire_frame = WireFrame(init_wire)
