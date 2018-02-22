@@ -182,6 +182,17 @@ class WireFrame(object):
     def frame(self):
         return self._frame
 
+    @property
+    def edge_map(self):
+        edge_map = {'top_row': self.frame[0],
+                    'bottom_row': self.frame[self.height]}
+        edge_map.update({
+            'left_col': [self.frame[row + 1][0] for row
+                         in range(self.height - 1)],
+            'right_col': [self.frame[row + 1][self.width] for row
+                          in range(self.height - 1)]})
+        return edge_map
+
     def _fill_row(self, initial=None):
         if not initial:
             initial = self._initial_wire
@@ -212,6 +223,11 @@ class WireFrame(object):
 
 
 class Block(object):
+    """
+    A conceptual piece that represents two consective Wire objects, shifts the
+    second object in the x or y direction depending on the dimension, and
+    returns the coordinates that define the pentagon and edge pieces.
+    """
 
     def __init__(self,
                  row_index,
@@ -233,4 +249,17 @@ class Block(object):
             pass
 
     @property
-    def edge_map(self):
+    def top_edge(self):
+        pass
+
+    @property
+    def bottom_edge(self):
+        pass
+
+    @property
+    def left_edge(self):
+        pass
+
+    @property
+    def right_edge(self):
+        pass
