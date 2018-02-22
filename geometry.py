@@ -19,11 +19,20 @@ class Grid(object):
     defined within.
     """
 
-    center = Point(2, 2)
-    bottom_left = Point(0, 0)
-    top_left = Point(0, 4)
-    top_right = Point(4, 4)
-    bottom_right = Poing(4, 0)
+    def __init__(self, shift_x=False, shift_y=False):
+        self.center = Point(2, 2)
+        self.bottom_left = Point(0, 0)
+        self.top_left = Point(0, 4)
+        self.top_right = Point(4, 4)
+        self.bottom_right = Point(4, 0)
+
+    @classmethod
+    def shift_x(cls):
+        return
+
+    @classmethod
+    def shift_y(cls):
+        pass
 
 
 class Point(object):
@@ -39,6 +48,12 @@ class Point(object):
 
     def mirror(self):
         return Point(self.y, self.x)
+
+    def shift_x(self, delta=4):
+        return Point(self.x + delta, self.y)
+
+    def shift_y(self, delta=4):
+        return Point(self.x, self.y + delta)
 
 
 class Wire(object):
@@ -115,8 +130,25 @@ class Wire(object):
                     self.point1.mirror(),
                     wire_type=wire_type)
 
-    def return_tile(self, grid):
-        return Tile(self, grid)
+    def shift_x(self, delta=4):
+        """Returns a new Wire with the point objects by a distance of four to
+        the right."""
+        return Wire(grid=Grid(),
+                    point1=self._point1.shift_x(delta),
+                    point2=self._point2.shift_x(delta),
+                    point3=self._point3.shift_x(delta),
+                    point4=self._point4.shift_x(delta),
+                    wire_type=self.wire_type)
+
+    def shift_y(self, delta=4):
+        """Returns a new Wire with the point objects by a distance of four
+        downwards."""
+        return Wire(grid=Grid(),
+                    point1=self._point1.shift_y(delta),
+                    point2=self._point2.shift_y(delta),
+                    point3=self._point3.shift_y(delta),
+                    point4=self._point4.shift_y(delta),
+                    wire_type=self.wire_type)
 
 
 class WireFrame(object):
@@ -198,3 +230,7 @@ class Block(object):
     @property
     def pentagon(self):
         if row_height == 0:
+            pass
+
+    @property
+    def edge_map(self):
