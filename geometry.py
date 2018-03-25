@@ -125,10 +125,10 @@ class Wire(object):
 
     def mirror(self):
         wire_type = 1 if self.wire_type == 0 else 0
-        return Wire(self.point4.mirror(),
-                    self.point3.mirror(),
-                    self.point2.mirror(),
-                    self.point1.mirror(),
+        return Wire(self._point4.mirror(),
+                    self._point3.mirror(),
+                    self._point2.mirror(),
+                    self._point1.mirror(),
                     wire_type=wire_type)
 
     def shift_x(self, delta=4):
@@ -183,17 +183,6 @@ class WireFrame(object):
     def frame(self):
         return self._frame
 
-    @property
-    def edge_map(self):
-        edge_map = {'top_row': self.frame[0],
-                    'bottom_row': self.frame[self.height]}
-        edge_map.update({
-            'left_col': [self.frame[row + 1][0] for row
-                         in range(self.height - 1)],
-            'right_col': [self.frame[row + 1][self.width] for row
-                          in range(self.height - 1)]})
-        return edge_map
-
     def _fill_row(self, initial=None):
         if not initial:
             initial = self._initial_wire
@@ -246,21 +235,9 @@ class Block(object):
 
     @property
     def pentagon(self):
-        if row_height == 0:
-            pass
+        if self.wire1 == 0 and self.column_width == 0
 
-    @property
-    def top_edge(self):
-        pass
 
-    @property
-    def bottom_edge(self):
-        pass
-
-    @property
-    def left_edge(self):
-        pass
-
-    @property
-    def right_edge(self):
+class Pentagon(object):
+    def __init__(self):
         pass

@@ -8,12 +8,12 @@ class Origin(object):
 
     """
 
-    def __init__(self):
-        pass
-
-
-class Pivot(object):
-    pass
+    def __init__(self, row, column, row_height, col_height, space='pos'):
+        self.row = row
+        self.column = column
+        self.row_height = row_height
+        self.col_height = col_height
+        self.space = space
 
 
 class Spiral(object):
@@ -23,18 +23,41 @@ class Spiral(object):
     carved into an entire TileFrame of a single color.
     """
 
-    def __init__(self, rotation=1, positive=True):
+    def __init__(self, origin, rotation='cw'):
+        self.origin = origin
         self._rotation = rotation
-        self._positive = positive
 
     @property
     def rotation(self):
         return self._rotation
 
-    @property
-    def positive(self):
-        return self._positive
+
+class SpiralA(Spiral):
+    """Represents the square spiral."""
+
+    def __init__(self, origin, rotation='cw'):
+        super().__init__(origin, rotation)
 
 
-class SquareSpiral(Spiral):
-    pass
+class SpiralB(Spiral):
+
+    def __init__(self, origin, rotation='cw'):
+        super().__init__(origin, rotation)
+
+
+class SpiralC(Spiral):
+
+    def __init__(self, origin, rotation='cw'):
+        super().__init__(origin, rotation)
+
+
+class SpiralD(Spiral):
+
+    def __init__(self, origin, rotation='cw'):
+        super().__init__(origin, rotation)
+
+
+class SpiralE(Spiral):
+
+    def __init__(self, origin, rotation='cw'):
+        super().__init__(origin, rotation)
