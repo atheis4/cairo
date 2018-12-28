@@ -92,6 +92,22 @@ class Wire(object):
             self.wire_type)
 
     @property
+    def point1(self):
+        return self._point1
+
+    @property
+    def point2(self):
+        return self._point2
+
+    @property
+    def point3(self):
+        return self._point3
+
+    @property
+    def point4(self):
+        return self._point4
+
+    @property
     def wire_type(self):
         return self._wire_type
 
@@ -170,6 +186,7 @@ class WireFrame(object):
         self._height = height
         self._initial_wire = initial_wire
         self._frame = self._build_frame()
+        self._edge_map = self._create_edge_map()
 
     @property
     def width(self):
@@ -185,6 +202,9 @@ class WireFrame(object):
 
     @property
     def edge_map(self):
+        return self._edge_map
+
+    def _create_edge_map(self):
         edge_map = {'top_row': self.frame[0],
                     'bottom_row': self.frame[self.height]}
         edge_map.update({
@@ -201,7 +221,7 @@ class WireFrame(object):
         return row
 
     def _fill_next(self, row, next_el):
-        if len(row) == self.width:
+        if len(row) == self.width + 1:
             return row
         else:
             row.append(next_el)
@@ -215,7 +235,7 @@ class WireFrame(object):
         return frame
 
     def _next_column(self, frame, next_row):
-        if len(frame) == self.height:
+        if len(frame) == self.height + 1:
             return frame
         else:
             frame.append(next_row)
@@ -248,19 +268,3 @@ class Block(object):
     def pentagon(self):
         if row_height == 0:
             pass
-
-    @property
-    def top_edge(self):
-        pass
-
-    @property
-    def bottom_edge(self):
-        pass
-
-    @property
-    def left_edge(self):
-        pass
-
-    @property
-    def right_edge(self):
-        pass
