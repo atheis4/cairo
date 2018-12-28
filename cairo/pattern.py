@@ -14,8 +14,17 @@ class Pattern(object):
     _pattern_style = None
 
     def __int__(self, origin: (int, int)=(0, 0)):
+        # TODO: origin presents an opportunity to use random input to generate
+        # TODO: pattern.
         self.origin_row = origin[0]
         self.origin_column = origin[1]
 
     def apply_pattern(self, layer: Layer):
-        pass
+        raise NotImplementedError
+
+    def define_pattern(self):
+        raise NotImplementedError
+
+
+# TODO: Pattern is applied pentagon by pentagon. We need to traverse the
+# TODO: pentagons one by one and turn visibility on.

@@ -8,7 +8,7 @@ class Piece(object):
 
     _seed = 324
 
-    def __init__(self, width: int=4, height: int=6):
+    def __init__(self, width: int=12, height: int=15):
         self.width = width
         self.height = height
 
