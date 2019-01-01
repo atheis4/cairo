@@ -18,6 +18,8 @@ class Piece(object):
         self._c_layer = None
 
         # Three individual Pattern objects: A, B, & C.
+        # TODO: What does a pattern applied to a layer look like? When does it
+        # TODO: occur in the program?
         self._a_pattern = None
         self._b_pattern = None
         self._c_pattern = None
@@ -92,7 +94,7 @@ class Piece(object):
         self._c_pattern = value
 
     def construct_piece(self, shape='alpha'):
-        for layer_name in ['A_layer', 'B_layer', 'C_layer']:
+        for layer_name in ['a_layer', 'b_layer', 'c_layer']:
             new_layer = Layer(shape, self.width, self.height)
             new_layer.construct_layer()
             new_layer.apply_pattern(pattern=None, origin=None, color=None)

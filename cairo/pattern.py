@@ -19,12 +19,14 @@ class Pattern(object):
         self.origin_row = origin[0]
         self.origin_column = origin[1]
 
-    def apply_pattern(self, layer: Layer):
-        raise NotImplementedError
-
-    def define_pattern(self):
-        raise NotImplementedError
-
 
 # TODO: Pattern is applied pentagon by pentagon. We need to traverse the
 # TODO: pentagons one by one and turn visibility on.
+
+
+class SquarePattern(Pattern):
+
+    _pattern_style = 'square'
+
+    def apply(self, shape, orientation, row, column):
+        

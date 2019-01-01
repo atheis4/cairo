@@ -7,8 +7,8 @@ class Layer(object):
     """
     Container for one layer of Pentagon objects.
 
-    A layer is series of nested nd.arrays representing rows filled with
-    columns, or cells, of Pentagon objects.
+    A layer is a mapping of orientation, row, and column values to their unique
+    Pentagon objects.
 
     Pentagon's are arranged in a 'shape': either 'alpha' or 'beta'.
     Each shape/cell is made up of four separate orientations of pentagon:
@@ -28,19 +28,20 @@ class Layer(object):
         'beta': ('right', 'down', 'left', 'up')
     }
     # Simple switch to control the 'mirror' effect of the pattern
-    _shape_switch = {'alpha': 'beta', 'beta': 'alpha'}
+    _shape_shift = {'alpha': 'beta', 'beta': 'alpha'}
 
     def __init__(self, init_shape: str='alpha', width: int=4, height: int=4):
         self._init_shape = init_shape
         self.width = width
         self.height = height
 
-        self.layer = None
         self._pentagon_map = None
 
-        # One of 'red' (255, 0, 0), 'green' (0, 255, 0), or 'blue' (0, 0, 255).
-        self.color = None
+        # pattern object
+        self.pattern = None
 
+        # rendering characteristics
+        self.color: (int, int, int) = None
         self.opacity = 0.25
 
     @property
@@ -48,69 +49,38 @@ class Layer(object):
         return self._init_shape
 
     def construct_layer(self):
-        # Check to see if we already have a layer on this object, raise if so.
-        if self.layer is not None:
+        # Check to see if we already have a pentagon mapping on this object,
+        # raise if so.
+        if self._pentagon_map is not None:
             raise RuntimeError(
-                "layer already exists, cannot construct a new one."
+                "A mapping for this layer already exists, cannot construct a "
+                "new one."
             )
         self._pentagon_map = {}
 
-        self.layer = []
-
         curr_shape = self.shape
-        curr_height, curr_width = 0, 0
 
-        while curr_height < self.height:
-            # Create the row
-            new_row = []
-
-            # while curr_width < self.width:
-            #     # Add a single cell to the new row
-            #     new_row.append(self._construct_cell(shape=shape,
-            #                                         row=curr_height,
-            #                                         col=curr_width))
-            #     # add one to current width and flip the shape when finished
-            #     # constructing a cell. If we have finished constructing an
-            #     # entire row, i.e. if curr_width == self.width, then we don't
-            #     # flip the shape. Just as cells alternate shape within a row,
-            #     # they must also alternate within each column. For this reason
-            #     # we keep the same shape when beginning to make a new row.
-            #     curr_width += 1
-            #
-            #     if curr_width != self.width:
-            #         shape = self._shape_switch[shape]
-
+        for curr_height in range(self.height):
+            # Create the row.
             # Add all of the cells with shapes equal to init_shape first.
-            self._add_to_row(new_row, curr_shape, curr_height, curr_width, 2)
-            # Then go through and add all of the remaining cells.
-            # self._add_to_row(new_row, curr_shape, curr_height, curr_width, 1)
+            # The starting column value of an even-indexed height is zero for
+            # the initial shape and one for an odd-indexed heights.
+            start, stop, step = curr_height % 2, self.width, 2
+            for curr_width in range(start, stop, step):
+                self._construct_cell(curr_shape, curr_height, curr_width)
 
-            self.layer.append(new_row)
-            # reset curr_width to 0 and add one to curr_height when finished
-            # constructing a row.
-            curr_width = 0
-            curr_height += 1
+        # Switch the shape and iterate again to complete the layer.
+        curr_shape = self._shape_shift[curr_shape]
 
-    def _add_to_row(self, row, shape, height, width, increment=2):
-        """
-        Modifies the row provided, adding each cell of pentagons either
-        alternating shape cells or creating each one in order.
-
-        If increment is 2, all cells for the provided shape will be created
-        first. If increment is 1, then it will alternate shapes while creating
-        cells for the row.
-        """
-        while width < self.width:
-            row.append(
-                self._construct_cell(shape=shape, row=height, col=width)
-            )
-            if increment == 1:
-                shape = self._shape_switch[shape]
-            width += increment
+        for curr_height in range(self.height):
+            # The starting column value of an even-indexed height is one for
+            # the secondary shape and zero for odd-indexed heights.
+            start, stop, step = 1 if curr_height % 2 == 0 else 0, self.width, 2
+            for curr_width in range(start, stop, step):
+                self._construct_cell(curr_shape, curr_height, curr_width)
 
     def _construct_cell(self, shape: str, row: int, col: int):
         """Create a new cell to add to our row."""
-        cell = []
         for orientation in self._shape_to_pentagons[shape]:
             # Check to see if the pentagon has already been made. If it is
             # already made, we must reference the existing object and add it a
@@ -125,22 +95,26 @@ class Layer(object):
                 # Build the pentagon.
                 pentagon = factory(shape=shape, row=row, col=col)
                 # Add to our dict of unique key to pentagon.
-                unique_key = (pentagon.orientation, pentagon.row, pentagon.col)
+                unique_key = pentagon.orientation, pentagon.row, pentagon.col
                 self._pentagon_map.update({unique_key: pentagon})
-            # TODO: I'm not sure we need the list representation of layers if
-            # TODO: we have the pentagon_map... We could use map.keys() to
-            # TODO: intuit all of the coordinates we need to render a layer.
-            cell.append(pentagon)
-        return cell
 
-    def flat_pentagons(self):
-        return [
-            pentagon for row in self.layer for col in row for pentagon in col
-        ]
+    def all_pentagons(self):
+        return list(self._pentagon_map.values())
 
-    def apply_pattern(self, pattern=None, origin=None, color=None):
-        # Create a pattern to apply to the layer
-        pass
+    def apply(self, pattern):
+        if self.pattern:
+            raise RuntimeError(
+                "A pattern has already been fixed to this layer. Please reset "
+                "before applying a new pattern."
+            )
+        self.pattern = pattern
+
+        for key, pentagon in self._pentagon_map.items():
+
+
+
+
+    def reset(self):
 
 
 layer = Layer(init_shape='alpha')

@@ -64,7 +64,7 @@ class Pentagon(object):
         # Left/Right pentagons can only exist in one column, but over two rows.
         self.shape = shape
 
-        self.visible = False
+        self._visible = False
 
     def __repr__(self):
         return (f'<{self.orientation} - row: {self.row}, col: {self.col}, '
@@ -92,6 +92,13 @@ class Pentagon(object):
                     dimension + self._dim_map[orientations][self.shape][0],
                     dimension + self._dim_map[orientations][self.shape][1]
                 )
+
+    @property
+    def visible(self):
+        return self._visible
+
+    def is_visible(self):
+        return self.visible
 
     def get_unique_key(self):
         """Return the unique key of this pentagon."""
