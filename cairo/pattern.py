@@ -13,7 +13,7 @@ class Pattern(object):
 
     _pattern_style = None
 
-    def __int__(self, origin: (int, int)=(0, 0)):
+    def __int__(self, origin: (int, int)=(0, 0), spin='clockwise'):
         # TODO: origin presents an opportunity to use random input to generate
         # TODO: pattern.
         self.origin_row = origin[0]
@@ -29,4 +29,3 @@ class SquarePattern(Pattern):
     _pattern_style = 'square'
 
     def apply(self, shape, orientation, row, column):
-        

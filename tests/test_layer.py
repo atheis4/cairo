@@ -16,7 +16,7 @@ def test_constructor():
     layer = Layer(init_shape='beta', width=8, height=12)
     assert layer.width == 8
     assert layer.height == 12
-    assert not layer.layer
+    assert not layer.all_pentagons
     assert not layer.color
     assert layer.opacity == 0.25
 

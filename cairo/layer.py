@@ -1,9 +1,9 @@
-from typing import List
+from typing import Dict, Iterable, List, Optional
 
 from cairo.pentagon import Pentagon
 
 
-class Layer(object):
+class Layer:
     """
     Container for one layer of Pentagon objects.
 
@@ -23,25 +23,25 @@ class Layer(object):
     """
 
     # Replace with the Pentagon subtypes: Up, Down, Left, Right
-    _shape_to_pentagons = {
+    _shape_to_pentagons: Dict[str, Dict[str, Iterable[str]]] = {
         'alpha': ('down', 'left', 'up', 'right'),
         'beta': ('right', 'down', 'left', 'up')
     }
     # Simple switch to control the 'mirror' effect of the pattern
-    _shape_shift = {'alpha': 'beta', 'beta': 'alpha'}
+    _shape_shift: Dict[str, str] = {'alpha': 'beta', 'beta': 'alpha'}
 
     def __init__(self, init_shape: str='alpha', width: int=4, height: int=4):
-        self._init_shape = init_shape
-        self.width = width
-        self.height = height
+        self._init_shape: str = init_shape
+        self.width: int = width
+        self.height: int = height
 
-        self._pentagon_map = None
+        self._pentagon_map: Optional[Dict[Pentagon]] = None
 
         # pattern object
         self.pattern = None
 
         # rendering characteristics
-        self.color: (int, int, int) = None
+        self.color: Optional[(int, int, int)] = None
         self.opacity = 0.25
 
     @property
@@ -86,8 +86,12 @@ class Layer(object):
             # already made, we must reference the existing object and add it a
             # second time to the layer list, while excluding it from the
             # pentagon map.
-            key = Pentagon.define_unique_key(orientation=orientation,
-                                             shape=shape, row=row, col=col)
+            key = Pentagon.define_unique_key(
+                orientation=orientation,
+                shape=shape,
+                row=row,
+                col=col
+            )
             pentagon = self._pentagon_map.get(key)
             if not pentagon:
                 # Get the class constructor for the pentagon we need to build.

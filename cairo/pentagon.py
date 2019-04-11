@@ -1,5 +1,7 @@
+from typing import Any, Dict, Optional, Tuple, Union
 
-class Pentagon(object):
+
+class Pentagon:
     """
     Pentagons represent the object that will be rendered in the final piece.
 
@@ -32,7 +34,7 @@ class Pentagon(object):
     # One of 'up', 'down', 'left', 'right' - defined as subclass attribute
     # Pentagons are not equilateral and have a 'larger' point. Orientation
     # refers to the direction that this fifth, larger point is directed.
-    orientation = None
+    orientation: Optional[str] = None
 
     # The entire pattern exists within a zero-indexed, row and column grid. The
     # top-left is considered the origin.
@@ -42,7 +44,7 @@ class Pentagon(object):
     # rows. Whether the pentagon spans move toward or away from the origin is
     # a result of which shape they inhibit, 'alpha' or 'beta'. We will call the
     #
-    _dim_map = {
+    _dim_map: Dict[Tuple[str, str], Dict[str, Tuple[int, int]]] = {
         ('left', 'down'): {'alpha': (-1, 0), 'beta': (0, 1)},
         ('right', 'up'): {'alpha': (0, 1), 'beta': (-1, 0)}
     }
@@ -62,15 +64,19 @@ class Pentagon(object):
 
         # Up/Down pentagons can only exist in one row, but over two columns.
         # Left/Right pentagons can only exist in one column, but over two rows.
-        self.shape = shape
+        self.shape: Optional[str] = shape
 
-        self._visible = False
+        self._visible: bool = False
+        self._row: Optional[int, Tuple[int, int]] = None
+        self._col: Optional[int, Tuple[int, int]] = None
 
-    def __repr__(self):
-        return (f'<{self.orientation} - row: {self.row}, col: {self.col}, '
-                f'shape: {self.shape}>')
+    def __repr__(self) -> str:
+        return (
+            f'<{self.orientation} - row: {self.row}, col: {self.col}, shape: '
+            f'{self.shape}>'
+        )
 
-    def _create_compound_dimension(self, dimension: int):
+    def _create_compound_dimension(self, dimension: int) -> Tuple[int, int]:
         """
         Creates the set of values for the 'compound' dimension (either row or
         column).
@@ -94,22 +100,42 @@ class Pentagon(object):
                 )
 
     @property
-    def visible(self):
+    def row(self) -> Optional[int, Tuple[int, int]]:
+        return self._row
+
+    @row.setter
+    def row(self, value) -> None:
+        self._row = value
+
+    @property
+    def col(self) -> Optional[int, Tuple[int, int]]:
+        return self._col
+
+    @col.setter
+    def col(self, value) -> None:
+        self._col = value
+
+    @property
+    def visible(self) -> bool:
         return self._visible
 
-    def is_visible(self):
+    def is_visible(self) -> bool:
         return self.visible
 
-    def get_unique_key(self):
+    def get_unique_key(
+            self
+    ) -> Tuple[str, Union[int, Tuple[int, int]], Union[int, Tuple[int, int]]]:
         """Return the unique key of this pentagon."""
         return self.orientation, self.row, self.col
 
     @classmethod
-    def define_unique_key(cls,
-                          orientation: str,
-                          shape: str,
-                          row: int,
-                          col: int):
+    def define_unique_key(
+            cls,
+            orientation: str,
+            shape: str,
+            row: int,
+            col: int
+    ) -> Tuple[str, Any]:
         """
         Provided an orientation, a shape, a row, and a column, return the
         unique key for all pentagons defined by these attributes.
@@ -156,17 +182,17 @@ class Pentagon(object):
 
 class UpPentagon(Pentagon):
 
-    orientation = 'up'
+    orientation: str = 'up'
 
     def __init__(self, shape: str, row: int, col: int):
         super(UpPentagon, self).__init__(shape=shape)
-        self.row = row
-        self.col = self._create_compound_dimension(dimension=col)
+        self.row: int = row
+        self.col: (int, int) = self._create_compound_dimension(dimension=col)
 
 
 class DownPentagon(Pentagon):
 
-    orientation = 'down'
+    orientation: str = 'down'
 
     def __init__(self, shape: str, row: int, col: int):
         super(DownPentagon, self).__init__(shape=shape)
@@ -176,7 +202,7 @@ class DownPentagon(Pentagon):
 
 class LeftPentagon(Pentagon):
 
-    orientation = 'left'
+    orientation: str = 'left'
 
     def __init__(self, shape: str, row: int, col: int):
         super(LeftPentagon, self).__init__(shape=shape)
@@ -186,7 +212,7 @@ class LeftPentagon(Pentagon):
 
 class RightPentagon(Pentagon):
 
-    orientation = 'right'
+    orientation: str = 'right'
 
     def __init__(self, shape: str, row: int, col: int):
         super(RightPentagon, self).__init__(shape)
