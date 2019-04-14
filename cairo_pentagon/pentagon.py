@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional, Tuple, Union
 
-from cairo.utils.constants import Orientation, Shape
-from cairo.utils import typing
+from cairo_pentagon.utils.constants import Orientation, Shape
+from cairo_pentagon.utils import typing
 
 
 class Pentagon:

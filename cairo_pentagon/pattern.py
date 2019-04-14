@@ -1,4 +1,4 @@
-from cairo.utils import typing
+from cairo_pentagon.utils import typing
 
 # This object must contain all the data necessary to apply a pattern onto a
 # layer object.
@@ -8,7 +8,7 @@ from cairo.utils import typing
 
 # If all a pattern object is doing is turning certain pentagons off and on,
 # then all it needs are the keys of the dictionary to turn off.
-from cairo.layer import Layer
+from cairo_pentagon.layer import Layer
 
 
 class Pattern:

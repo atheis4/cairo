@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional, Tuple, Union
 
-from cairo.pentagon import Pentagon
+from cairo_pentagon.pentagon import Pentagon
 
 
 Column = Optional[int, Tuple[int, int]]

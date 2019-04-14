@@ -1,7 +1,7 @@
 import pytest
 import random
 
-from cairo.pentagon import (
+from cairo_pentagon.pentagon import (
     Pentagon, UpPentagon, DownPentagon, LeftPentagon, RightPentagon
 )
 

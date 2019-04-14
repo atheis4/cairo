@@ -1,6 +1,6 @@
 import pytest
 
-from cairo.layer import Layer
+from cairo_pentagon.layer import Layer
 
 
 def test_default_constructor():

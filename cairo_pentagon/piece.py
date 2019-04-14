@@ -1,5 +1,5 @@
-from cairo.layer import Layer
-from cairo.pattern import Pattern
+from cairo_pentagon.layer import Layer
+from cairo_pentagon.pattern import Pattern
 
 
 class Piece:
