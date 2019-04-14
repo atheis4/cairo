@@ -8,7 +8,7 @@ class Piece(object):
 
     _seed = 324
 
-    def __init__(self, width: int=12, height: int=15):
+    def __init__(self, width: int = 12, height: int = 15):
         self.width = width
         self.height = height
 
@@ -97,5 +97,5 @@ class Piece(object):
         for layer_name in ['a_layer', 'b_layer', 'c_layer']:
             new_layer = Layer(shape, self.width, self.height)
             new_layer.construct_layer()
-            new_layer.apply_pattern(pattern=None, origin=None, color=None)
+            new_layer.apply(pattern=None, origin=None, color=None)
             setattr(self, layer_name, new_layer)

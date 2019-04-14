@@ -1,6 +1,9 @@
-from typing import Dict, Iterable, List, Optional
+from typing import Any, Dict, Optional, Tuple, Union
 
 from cairo.pentagon import Pentagon
+from cairo.pattern import Pattern
+from cairo.utils.constants import Orientation, Shape
+from cairo.utils import typing
 
 
 class Layer:
@@ -21,31 +24,55 @@ class Layer:
     These two shapes will selectively alternate as the layer is constructed to
     build the Cairo Pentagon pattern.
     """
-
     # Replace with the Pentagon subtypes: Up, Down, Left, Right
-    _shape_to_pentagons: Dict[str, Dict[str, Iterable[str]]] = {
-        'alpha': ('down', 'left', 'up', 'right'),
-        'beta': ('right', 'down', 'left', 'up')
+    _shape_to_pentagons: Dict[str, Dict[str, Tuple[str]]] = {
+        Shape.ALPHA: (
+            Orientation.DOWN,
+            Orientation.LEFT,
+            Orientation.UP,
+            Orientation.RIGHT
+        ),
+        Shape.BETA: (
+            Orientation.RIGHT,
+            Orientation.DOWN,
+            Orientation.LEFT,
+            Orientation.UP
+        )
     }
     # Simple switch to control the 'mirror' effect of the pattern
-    _shape_shift: Dict[str, str] = {'alpha': 'beta', 'beta': 'alpha'}
+    _shape_shift: Dict[str, str] = {
+        Shape.ALPHA: Shape.BETA, Shape.BETA: Shape.ALPHA
+    }
 
-    def __init__(self, init_shape: str='alpha', width: int=4, height: int=4):
+    def __init__(
+            self,
+            init_shape: str = Shape.ALPHA,
+            width: int = 4,
+            height: int = 4
+    ):
         self._init_shape: str = init_shape
         self.width: int = width
         self.height: int = height
 
-        self._pentagon_map: Optional[Dict[Pentagon]] = None
+        self._pentagon_map: typing.PentagonMap = None
 
         # pattern object
-        self.pattern = None
+        self.pattern: Optional[Pattern] = None
 
         # rendering characteristics
-        self.color: Optional[(int, int, int)] = None
-        self.opacity = 0.25
+        self.color: Optional[Tuple[int, int, int]] = None
+        self.opacity: float = 0.25
 
     @property
-    def shape(self):
+    def pattern(self) -> Pattern:
+        return self._pattern
+
+    @pattern.setter
+    def pattern(self, value) -> None:
+        self._pattern = value
+
+    @property
+    def shape(self) -> str:
         return self._init_shape
 
     def construct_layer(self):
@@ -56,9 +83,9 @@ class Layer:
                 "A mapping for this layer already exists, cannot construct a "
                 "new one."
             )
-        self._pentagon_map = {}
+        self._pentagon_map: typing.PentagonMap = {}
 
-        curr_shape = self.shape
+        curr_shape: str = self.shape
 
         for curr_height in range(self.height):
             # Create the row.
@@ -82,10 +109,8 @@ class Layer:
     def _construct_cell(self, shape: str, row: int, col: int):
         """Create a new cell to add to our row."""
         for orientation in self._shape_to_pentagons[shape]:
-            # Check to see if the pentagon has already been made. If it is
-            # already made, we must reference the existing object and add it a
-            # second time to the layer list, while excluding it from the
-            # pentagon map.
+            # Check to see if the pentagon has already been made. If it isn't,
+            # create it and add it to the pentagon map.
             key = Pentagon.define_unique_key(
                 orientation=orientation,
                 shape=shape,
@@ -99,27 +124,23 @@ class Layer:
                 # Build the pentagon.
                 pentagon = factory(shape=shape, row=row, col=col)
                 # Add to our dict of unique key to pentagon.
-                unique_key = pentagon.orientation, pentagon.row, pentagon.col
+                unique_key: Tuple[str, Any, Any] = (
+                    pentagon.orientation, pentagon.row, pentagon.col
+                )
                 self._pentagon_map.update({unique_key: pentagon})
 
     def all_pentagons(self):
         return list(self._pentagon_map.values())
 
-    def apply(self, pattern):
-        if self.pattern:
-            raise RuntimeError(
-                "A pattern has already been fixed to this layer. Please reset "
-                "before applying a new pattern."
-            )
+    def apply(self, pattern: Pattern) -> None:
+        """
+        Apply a pattern to the layer.
+        """
         self.pattern = pattern
 
-        for key, pentagon in self._pentagon_map.items():
-
-
-
-
     def reset(self):
+        pass
 
 
-layer = Layer(init_shape='alpha')
+layer = Layer(init_shape=Shape.ALPHA)
 layer.construct_layer()
