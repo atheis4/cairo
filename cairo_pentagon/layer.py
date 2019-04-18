@@ -78,12 +78,12 @@ class Layer:
     def construct_layer(self):
         # Check to see if we already have a pentagon mapping on this object,
         # raise if so.
-        if self._pentagon_map is not None:
+        if self._pentagon_map:
             raise RuntimeError(
                 "A mapping for this layer already exists, cannot construct a "
                 "new one."
             )
-        self._pentagon_map: typing.PentagonMap = {}
+        self._pentagon_map: Dict[typing.Key, Pentagon] = {}
 
         curr_shape: str = self.shape
 

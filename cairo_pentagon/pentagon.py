@@ -47,7 +47,7 @@ class Pentagon:
     # rows. Whether the pentagon spans move toward or away from the origin is
     # a result of which shape they inhibit, 'alpha' or 'beta'.
     _dim_map: typing.DimensionMap = {
-        (Orientation.UP, Orientation.LEFT): {
+        (Orientation.DOWN, Orientation.LEFT): {
             Shape.ALPHA: (-1, 0), Shape.BETA: (0, 1)
         },
         (Orientation.RIGHT, Orientation.UP): {
