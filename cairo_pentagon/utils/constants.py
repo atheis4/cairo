@@ -1,15 +1,34 @@
+from cairo_pentagon.utils import typing
+
+
+class Colors:
+    BLUE: typing.Color = (0, 0, 255)
+    GREEN: typing.Color = (0, 255, 0)
+    RED: typing.Color = (255, 0, 0)
+
+
+class DimensionalOffset:
+    POSITIVE: Tuple[int, int] = (0, 1)
+    NEGATIVE: Tuple[int, int] = (-1, 0)
+
+
 class Orientation:
-    UP: str = 'up'
-    DOWN: str = 'down'
-    LEFT: str = 'left'
-    RIGHT: str = 'right'
+    UP: typing.Orientation = 'up'
+    DOWN: typing.Orientation = 'down'
+    LEFT: typing.Orientation = 'left'
+    RIGHT: typing.Orientation = 'right'
 
 
 class Shape:
-    ALPHA: str = 'alpha'
-    BETA: str = 'beta'
+    ALPHA: typing.Shape = 'alpha'
+    BETA: typing.Shape = 'beta'
 
 
 class Spin:
-    CLOCKWISE = 'clockwise'
-    COUNTER_CLOCKWISE = 'counter_clockwise'
+    CLOCKWISE: typing.Spin = 'clockwise'
+    COUNTER_CLOCKWISE: typing.Spin = 'counter_clockwise'
+
+
+DEFAULT_OPACITY: typing.Opacity = 0.25
+DEFAULT_HEIGHT: typing.Height = 4
+DEFAULT_WIDTH: typing.Width = 4

@@ -21,32 +21,33 @@ from cairo_pentagon.utils import typing
 
 class Pattern:
 
-    _pattern_style: Optional[str] = None
+    _pattern_style: Optional[typing.PatternStyle] = None
 
     def __int__(
             self,
             origin: typing.Origin = None,
-            shape: str = Shape.ALPHA,
-            spin: str = Spin.CLOCKWISE
+            shape: typing.Shape = Shape.ALPHA,
+            spin: typing.Spin = Spin.CLOCKWISE
     ):
         self.origin: Optional[typing.Origin] = origin
-        self.spin: Optional[str] = spin
+        self.spin: Optional[typing.Spin] = spin
+
+    def apply(self, *args, **kwargs) -> None:
+        raise NotImplementedError
 
 
 class SquarePattern(Pattern):
 
-    _pattern_style: Optional[str] = 'square'
+    _pattern_style: typing.PatternStyle = 'square'
 
     def __init__(
             self,
             origin: Optional[typing.Origin] = None,
-            spin: Optional[str] = None
+            spin: Optional[typing.Spin] = None
     ):
         super().__init__(origin, spin)
 
-    def _setup(self):
+    def apply(self, pentagon_map: Dict[typing.Key, Pentagon]) -> None:
+        for key, pentagon in pentagon_map.items():
+            orientation, row, col = key
 
-
-    def apply(self, pentagon_map: Dict[typing.Key, Pentagon]):
-        for key, pentagon in pentagon_map:
-            pass

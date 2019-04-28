@@ -2,8 +2,7 @@ from typing import Any, Dict, Optional, Tuple, Union
 
 from cairo_pentagon.pentagon import Pentagon
 from cairo_pentagon.pattern import Pattern
-from cairo_pentagon.utils.constants import Orientation, Shape
-from cairo_pentagon.utils import typing
+from cairo_pentagon.utils import constants, typing
 
 
 class Layer:
@@ -24,58 +23,52 @@ class Layer:
     These two shapes will selectively alternate as the layer is constructed to
     build the Cairo Pentagon pattern.
     """
-    # Replace with the Pentagon subtypes: Up, Down, Left, Right
-    _shape_to_pentagons: Dict[str, Dict[str, Tuple[str]]] = {
-        Shape.ALPHA: (
-            Orientation.DOWN,
-            Orientation.LEFT,
-            Orientation.UP,
-            Orientation.RIGHT
+    _shape_to_pentagons: Dict[typing.Shape, Tuple[typing.Orientation]] = {
+        constants.Shape.ALPHA: (
+            constants.Orientation.DOWN,
+            constants.Orientation.LEFT,
+            constants.Orientation.UP,
+            constants.Orientation.RIGHT
         ),
-        Shape.BETA: (
-            Orientation.RIGHT,
-            Orientation.DOWN,
-            Orientation.LEFT,
-            Orientation.UP
+        constants.Shape.BETA: (
+            constants.Orientation.RIGHT,
+            constants.Orientation.DOWN,
+            constants.Orientation.LEFT,
+            constants.Orientation.UP
         )
     }
-    # Simple switch to control the 'mirror' effect of the pattern
-    _shape_shift: Dict[str, str] = {
-        Shape.ALPHA: Shape.BETA, Shape.BETA: Shape.ALPHA
+    _shape_shift: Dict[typing.Shape, typing.Shape] = {
+        constants.Shape.ALPHA: constants.Shape.BETA,
+        constants.Shape.BETA: constants.Shape.ALPHA
     }
 
     def __init__(
             self,
-            init_shape: str = Shape.ALPHA,
-            width: int = 4,
-            height: int = 4
+            init_shape: typing.Shape = constants.Shape.ALPHA,
+            width: typing.Width = constants.DEFAULT_WIDTH,
+            height: typing.Height = constants.DEFAULT_HEIGHT,
+            color: typing.Color = constants.Colors.RED,
+            opacity: typing.Opacity = constants.DEFAULT_OPACITY
     ):
-        self._init_shape: str = init_shape
-        self.width: int = width
-        self.height: int = height
+        self._init_shape: typing.Shape = init_shape
+        self.width: typing.Width = width
+        self.height: typing.Height = height
 
-        self._pentagon_map: typing.PentagonMap = None
-
-        # pattern object
-        self.pattern: Optional[Pattern] = None
+        self._pentagon_map: Optional[Dict[typing.Key, Pentagon]] = None
 
         # rendering characteristics
-        self.color: Optional[Tuple[int, int, int]] = None
-        self.opacity: float = 0.25
+        self.color: typing.Color = color
+        self.opacity: typing.Opacity = opacity
 
     @property
-    def pattern(self) -> Pattern:
-        return self._pattern
-
-    @pattern.setter
-    def pattern(self, value) -> None:
-        self._pattern = value
+    def pentagon_map(self) -> Dict[typing.Key, Pentagon]:
+        return self._pentagon_map
 
     @property
-    def shape(self) -> str:
+    def shape(self) -> typing.Shape:
         return self._init_shape
 
-    def construct_layer(self):
+    def construct_layer(self) -> None:
         # Check to see if we already have a pentagon mapping on this object,
         # raise if so.
         if self._pentagon_map:
@@ -85,7 +78,7 @@ class Layer:
             )
         self._pentagon_map: Dict[typing.Key, Pentagon] = {}
 
-        curr_shape: str = self.shape
+        curr_shape: typing.Shape = self.shape
 
         for curr_height in range(self.height):
             # Create the row.
@@ -106,41 +99,29 @@ class Layer:
             for curr_width in range(start, stop, step):
                 self._construct_cell(curr_shape, curr_height, curr_width)
 
-    def _construct_cell(self, shape: str, row: int, col: int):
+    def _construct_cell(
+            self,
+            shape: typing.Shape,
+            row: typing.Row,
+            col: typing.Column
+    ) -> None:
         """Create a new cell to add to our row."""
         for orientation in self._shape_to_pentagons[shape]:
             # Check to see if the pentagon has already been made. If it isn't,
             # create it and add it to the pentagon map.
-            key = Pentagon.define_unique_key(
+            key: typing.Key = Pentagon.define_unique_key(
                 orientation=orientation,
                 shape=shape,
                 row=row,
                 col=col
             )
-            pentagon = self._pentagon_map.get(key)
-            if not pentagon:
+            if key not in self._pentagon_map:
                 # Get the class constructor for the pentagon we need to build.
                 factory = Pentagon.get_subclass_from_orientation(orientation)
                 # Build the pentagon.
-                pentagon = factory(shape=shape, row=row, col=col)
+                pentagon: Pentagon = factory(shape=shape, row=row, col=col)
                 # Add to our dict of unique key to pentagon.
-                unique_key: Tuple[str, Any, Any] = (
-                    pentagon.orientation, pentagon.row, pentagon.col
-                )
-                self._pentagon_map.update({unique_key: pentagon})
-
-    def all_pentagons(self):
-        return list(self._pentagon_map.values())
-
-    def apply(self, pattern: Pattern) -> None:
-        """
-        Apply a pattern to the layer.
-        """
-        self.pattern = pattern
+                self._pentagon_map.update({key: pentagon})
 
     def reset(self):
         pass
-
-
-layer = Layer(init_shape=Shape.ALPHA)
-layer.construct_layer()

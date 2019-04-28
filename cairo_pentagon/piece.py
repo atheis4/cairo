@@ -1,3 +1,5 @@
+from typing import Optional
+
 from cairo_pentagon.layer import Layer
 from cairo_pentagon.pattern import Pattern
 
@@ -6,23 +8,21 @@ class Piece:
 
     # A Piece is comprised of three layers of pentagon patterns.
 
-    _seed = 324
+    _seed: int = 324
 
     def __init__(self, width: int = 12, height: int = 15):
         self.width = width
         self.height = height
 
         # Three individual Layer objects: A, B, & C.
-        self._a_layer = None
-        self._b_layer = None
-        self._c_layer = None
+        self._a_layer: Optional[Layer] = None
+        self._b_layer: Optional[Layer] = None
+        self._c_layer: Optional[Layer] = None
 
         # Three individual Pattern objects: A, B, & C.
-        # TODO: What does a pattern applied to a layer look like? When does it
-        # TODO: occur in the program?
-        self._a_pattern = None
-        self._b_pattern = None
-        self._c_pattern = None
+        self._a_pattern: Optional[Pattern] = None
+        self._b_pattern: Optional[Pattern] = None
+        self._c_pattern: Optional[Pattern] = None
 
         # The order of the layers
         self.layering = None
@@ -93,9 +93,9 @@ class Piece:
     def c_pattern(self, value: Pattern):
         self._c_pattern = value
 
-    def construct_piece(self, shape='alpha'):
+    def construct_piece(self, pattern: Pattern, shape='alpha'):
         for layer_name in ['a_layer', 'b_layer', 'c_layer']:
             new_layer = Layer(shape, self.width, self.height)
             new_layer.construct_layer()
-            new_layer.apply(pattern=None, origin=None, color=None)
+            pattern.apply(new_layer.pentagon_map)
             setattr(self, layer_name, new_layer)
