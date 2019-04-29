@@ -23,6 +23,7 @@ class Pentagon:
 
     Shape
     -----
+    TODO: complete comment
 
 
     Simple and Compound Dimensions
@@ -219,7 +220,7 @@ class Pentagon:
             Pentagon subclass constructor.
         """
         for pentagon in cls.__subclasses__():
-            if pentagon.orientation == orientation:
+            if getattr(pentagon, 'orientation') == orientation:
                 return pentagon
 
 
