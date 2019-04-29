@@ -47,13 +47,32 @@ class Pentagon:
     # rows. Whether the pentagon spans move toward or away from the origin is
     # a result of which shape they inhibit, 'alpha' or 'beta'.
     _dim_map: typing.DimensionMap = {
-        (constants.Orientation.DOWN, constants.Orientation.LEFT): {
-            constants.Shape.ALPHA: constants.DimensionalOffset.NEGATIVE,
-            constants.Shape.BETA: constants.DimensionalOffset.POSITIVE
+        constants.Shape.ALPHA: {
+            constants.Orientation.DOWN: constants.DimensionalOffset.NEGATIVE,
+            constants.Orientation.LEFT: constants.DimensionalOffset.NEGATIVE,
+            constants.Orientation.UP: constants.DimensionalOffset.POSITIVE,
+            constants.Orientation.RIGHT: constants.DimensionalOffset.POSITIVE
         },
-        (constants.Orientation.RIGHT, constants.Orientation.UP): {
-            constants.Shape.ALPHA: constants.DimensionalOffset.POSITIVE,
-            constants.Shape.BETA: constants.DimensionalOffset.NEGATIVE
+        constants.Shape.BETA: {
+            constants.Orientation.RIGHT: constants.DimensionalOffset.NEGATIVE,
+            constants.Orientation.DOWN: constants.DimensionalOffset.POSITIVE,
+            constants.Orientation.LEFT: constants.DimensionalOffset.POSITIVE,
+            constants.Orientation.UP: constants.DimensionalOffset.NEGATIVE
+        }
+    }
+
+    _coord_map: typing.CoordinateMap = {
+        constants.Shape.ALPHA: {
+            constants.Orientation.DOWN: max,
+            constants.Orientation.LEFT: max,
+            constants.Orientation.UP: min,
+            constants.Orientation.RIGHT: min
+        },
+        constants.Shape.BETA: {
+            constants.Orientation.RIGHT: max,
+            constants.Orientation.DOWN: min,
+            constants.Orientation.LEFT: min,
+            constants.Orientation.UP: max
         }
     }
 
@@ -69,9 +88,6 @@ class Pentagon:
         # so long as they follow strict rules about position. Certain types of
         # pentagon--based on orientation--may only exist in the same row or the
         # same column.
-
-        # Up/Down pentagons can only exist in one row, but over two columns.
-        # Left/Right pentagons can only exist in one column, but over two rows.
         self.shape: typing.Shape = shape
 
         self.visible: typing.Visibility = False
@@ -130,22 +146,20 @@ class Pentagon:
             Set of two integers representing the two rows or two columns that
             the shape exists within.
         """
-        for orientations in self._dim_map.keys():
-            if self.orientation in orientations:
-                return (
-                    dimension + self._dim_map[orientations][self.shape][0],
-                    dimension + self._dim_map[orientations][self.shape][1]
-                )
+        return (
+            dimension + self._dim_map[self.shape][self.orientation][0],
+            dimension + self._dim_map[self.shape][self.orientation][1]
+        )
 
     def get_unique_key(self) -> typing.Key:
         """Return the unique key of this pentagon."""
-        return self.orientation, self.row, self.col
+        return self.shape, self.orientation, self.row, self.col
 
     @classmethod
     def define_unique_key(
             cls,
-            orientation: typing.Orientation,
             shape: typing.Shape,
+            orientation: typing.Orientation,
             row: typing.Dimension,
             col: typing.Dimension
     ) -> typing.Key:
@@ -154,32 +168,54 @@ class Pentagon:
         unique key for all pentagons defined by these attributes.
 
         Arguments:
-            orientation (typing.Orientation):
             shape (typing.Shape):
+            orientation (typing.Orientation):
             row (typing.Dimension):
             col(typing.Dimension)
 
         Returns:
-            A tuple of (orientation, row, col)
+            A Key tuple of (shape, orientation, row, col)
         """
-        for orientations in cls._dim_map.keys():
-            if orientation in orientations:
-                if orientation in [Orientation.UP, Orientation.DOWN]:
-                    dimensions: Tuple[typing.Dimension, typing.Dimension] = (
-                        row,
-                        (col + cls._dim_map[orientations][shape][0],
-                         col + cls._dim_map[orientations][shape][1]))
-                else:
-                    dimensions: Tuple[typing.Dimension, typing.Dimension] = (
-                        (row + cls._dim_map[orientations][shape][0],
-                         row + cls._dim_map[orientations][shape][1]),
-                        col
-                    )
-                return (orientation, *dimensions)
+        if orientation in [
+            constants.Orientation.UP, constants.Orientation.DOWN
+        ]:
+            dimensions: Tuple[typing.Dimension, typing.Dimension] = (
+                row,
+                (col + cls._dim_map[shape][orientation][0],
+                 col + cls._dim_map[shape][orientation][1]))
+        else:
+            dimensions: Tuple[typing.Dimension, typing.Dimension] = (
+                (row + cls._dim_map[shape][orientation][0],
+                 row + cls._dim_map[shape][orientation][1]),
+                col
+            )
+        return shape, orientation, dimensions[0], dimensions[1]
 
     @classmethod
     def coordinates_from_key(cls, key: typing.Key) -> typing.Coordinates:
+        """
+        Return coordinates from a pentagon key.
 
+        Arguments:
+            key (typing.Key):
+
+        Returns:
+            A Coordinate tuple of (row, col)
+        """
+        shape, orientation, row, column = key
+        if orientation in [
+            constants.Orientation.UP, constants.Orientation.DOWN
+        ]:
+            coordinates: typing.Coordinates = (
+                row,
+                cls._coord_map[shape][orientation](column)
+            )
+        else:
+            coordinates: typing.Coordinates = (
+                cls._coord_map[shape][orientation](row),
+                column
+            )
+        return coordinates
 
     @classmethod
     def get_subclass_from_orientation(cls, orientation: str):

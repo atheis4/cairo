@@ -8,8 +8,8 @@ class Colors:
 
 
 class DimensionalOffset:
-    POSITIVE: Tuple[int, int] = (0, 1)
-    NEGATIVE: Tuple[int, int] = (-1, 0)
+    POSITIVE: typing.Coordinates = (0, 1)
+    NEGATIVE: typing.Coordinates = (-1, 0)
 
 
 class Orientation:

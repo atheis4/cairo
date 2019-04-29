@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Tuple, Union
+from typing import Callable, Dict, Iterable, Optional, Tuple, Union
 
 
 Color = Tuple[int, int, int]
@@ -9,11 +9,11 @@ Coordinates = Tuple[int, int]
 
 CompoundDimension = Union[Tuple[int, int], int]
 
-DimensionMap = Dict[Tuple[str, str], Dict[str, Tuple[int, int]]]
+DimensionMap = Dict[str, Dict[str, Coordinates]]
 
 Height = int
 
-Key = Tuple[str, Union[int, Tuple[int, int]], Union[Tuple[int, int], int]]
+Key = Tuple[str, str, Union[int, Tuple[int, int]], Union[Tuple[int, int], int]]
 
 Opacity = float
 
@@ -34,3 +34,5 @@ Width = int
 Visibility = bool
 
 Dimension = Union[Column, Row, CompoundDimension]
+
+CoordinateMap: Dict[str, Dict[str, Callable[[Iterable[int]], int]]]
