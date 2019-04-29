@@ -1,6 +1,5 @@
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Optional, Tuple, Union
 
-from cairo_pentagon.utils.constants import Orientation, Shape
 from cairo_pentagon.utils import constants, typing
 
 
@@ -11,6 +10,7 @@ class Pentagon:
     Pentagons have several attributes which uniquely define its position, shape,
     and orientation.
 
+
     Attributes:
 
     Orientation
@@ -20,32 +20,32 @@ class Pentagon:
     pentagon's orientation. The four different orientations of pentagons: up,
     down, left, and right.
 
+
     Shape
     -----
 
-    Fixed and Dynamic Dimension
-    ---------------------------
-    Each pentagon spans across either the row or column dimension. Up and Down
-    pentagons exist within a single row, but span two columns. So for these
-    pentagons, the row is the fixed dimension and the column is the dynamic
-    dimension. While Left and Right pentagons exist within one column and span
-    two rows.
+
+    Simple and Compound Dimensions
+    ------------------------------
+    Each pentagon spans across either the row or column dimension.
+
+    Up and Down pentagons exist within a single row, but span two columns. For
+    these pentagons, the row is represented by a single int and the column is
+    represented by a tuple of ints (compound).
+
+    While Left and Right pentagons exist within one column and span two rows.
+    The column is represented by a single int and the row is represented by a
+    tuple of ints (compound).
+
+
+    Key
+    ---
+    Pentagons are uniquely identified by four attributes: shape, orientation,
+    row, and column. Each of these are hashable values and will be used to tell
+    our program whether the requested pentagon has already been created, or if
+    we need to make it. This allows us to reference the same pentagon object
+    across a single frame layer.
     """
-    # TODO: Since this is the actual object being rendered, it needs to have
-    # knowledge of its visibility, color, and opacity.
-
-    # One of 'up', 'down', 'left', 'right' - defined as subclass attribute
-    # Pentagons are not equilateral and have a 'larger' point. Orientation
-    # refers to the direction that this fifth, larger point is directed.
-    orientation: Optional[typing.Orientation] = None
-
-    # The entire pattern exists within a zero-indexed, row and column grid. The
-    # top-left is considered the origin.
-
-    # Each pentagon spans more than one row or column. Up and Down pentagons
-    # always span two columns, while Left and Right pentagons always span two
-    # rows. Whether the pentagon spans move toward or away from the origin is
-    # a result of which shape they inhibit, 'alpha' or 'beta'.
     _dim_map: typing.DimensionMap = {
         constants.Shape.ALPHA: {
             constants.Orientation.DOWN: constants.DimensionalOffset.NEGATIVE,
@@ -76,18 +76,9 @@ class Pentagon:
         }
     }
 
-    # Pentagons are uniquely identified by four attributes: their shape,
-    # orientation, row, and column. Each of these are hashable values and will
-    # be used to tell our program whether the requested pentagon has already
-    # been created, or if we need to make it. This allows us to reference the
-    # same pentagon object across a single frame layer.
+    orientation: Optional[typing.Orientation] = None
 
     def __init__(self, shape: typing.Shape = constants.Shape.ALPHA):
-        # A pentagon always exists relative to a 2-d array of rows and columns.
-        # One pentagon may exist in multiple rows and columns at the same time,
-        # so long as they follow strict rules about position. Certain types of
-        # pentagon--based on orientation--may only exist in the same row or the
-        # same column.
         self.shape: typing.Shape = shape
 
         self.visible: typing.Visibility = False
@@ -153,7 +144,32 @@ class Pentagon:
 
     def get_unique_key(self) -> typing.Key:
         """Return the unique key of this pentagon."""
-        return self.shape, self.orientation, self.row, self.col
+        return self.orientation, self.row, self.col
+
+    def coordinates_from_key(self, key: typing.Key) -> typing.Coordinates:
+        """
+        Return coordinates from a pentagon key.
+
+        Arguments:
+            key (typing.Key):
+
+        Returns:
+            A Coordinate tuple of (row, col)
+        """
+        orientation, row, column = key
+        if orientation in [
+            constants.Orientation.UP, constants.Orientation.DOWN
+        ]:
+            coordinates: typing.Coordinates = (
+                row,
+                self._coord_map[self.shape][orientation](column)
+            )
+        else:
+            coordinates: typing.Coordinates = (
+                self._coord_map[self.shape][orientation](row),
+                column
+            )
+        return coordinates
 
     @classmethod
     def define_unique_key(
@@ -189,33 +205,7 @@ class Pentagon:
                  row + cls._dim_map[shape][orientation][1]),
                 col
             )
-        return shape, orientation, dimensions[0], dimensions[1]
-
-    @classmethod
-    def coordinates_from_key(cls, key: typing.Key) -> typing.Coordinates:
-        """
-        Return coordinates from a pentagon key.
-
-        Arguments:
-            key (typing.Key):
-
-        Returns:
-            A Coordinate tuple of (row, col)
-        """
-        shape, orientation, row, column = key
-        if orientation in [
-            constants.Orientation.UP, constants.Orientation.DOWN
-        ]:
-            coordinates: typing.Coordinates = (
-                row,
-                cls._coord_map[shape][orientation](column)
-            )
-        else:
-            coordinates: typing.Coordinates = (
-                cls._coord_map[shape][orientation](row),
-                column
-            )
-        return coordinates
+        return orientation, dimensions[0], dimensions[1]
 
     @classmethod
     def get_subclass_from_orientation(cls, orientation: str):

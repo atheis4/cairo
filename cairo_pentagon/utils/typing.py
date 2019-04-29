@@ -5,6 +5,8 @@ Color = Tuple[int, int, int]
 
 Column = Optional[Union[int, Tuple[int, int]]]
 
+CoordinateMap = Dict[str, Dict[str, Callable[[Iterable[int]], int]]]
+
 Coordinates = Tuple[int, int]
 
 CompoundDimension = Union[Tuple[int, int], int]
@@ -13,7 +15,7 @@ DimensionMap = Dict[str, Dict[str, Coordinates]]
 
 Height = int
 
-Key = Tuple[str, str, Union[int, Tuple[int, int]], Union[Tuple[int, int], int]]
+Key = Tuple[str, Union[int, Tuple[int, int]], Union[Tuple[int, int], int]]
 
 Opacity = float
 
@@ -34,5 +36,3 @@ Width = int
 Visibility = bool
 
 Dimension = Union[Column, Row, CompoundDimension]
-
-CoordinateMap: Dict[str, Dict[str, Callable[[Iterable[int]], int]]]
