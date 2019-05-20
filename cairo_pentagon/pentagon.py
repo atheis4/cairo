@@ -82,7 +82,7 @@ class Pentagon:
     def __init__(self, shape: typing.Shape = constants.Shape.ALPHA):
         self.shape: typing.Shape = shape
 
-        self.visible: typing.Visibility = False
+        self.visibility: typing.Visibility = False
         self.row: Optional[typing.Row] = None
         self.col: Optional[typing.Column] = None
 
@@ -109,15 +109,18 @@ class Pentagon:
         self._col = value
 
     @property
-    def visible(self) -> typing.Visibility:
-        return self._visible
+    def visibility(self) -> typing.Visibility:
+        return self._visibility
 
-    @visible.setter
-    def visible(self, value) -> None:
-        self._visible = value
+    @visibility.setter
+    def visibility(self, value) -> None:
+        self._visibility = value
 
     def is_visible(self) -> typing.Visibility:
         return self.visible
+
+    def make_visible(self) -> None:
+        self.visibility = True
 
     def _create_compound_dimension(
             self,
@@ -146,31 +149,6 @@ class Pentagon:
     def get_unique_key(self) -> typing.Key:
         """Return the unique key of this pentagon."""
         return self.orientation, self.row, self.col
-
-    def coordinates_from_key(self, key: typing.Key) -> typing.Coordinates:
-        """
-        Return coordinates from a pentagon key.
-
-        Arguments:
-            key (typing.Key):
-
-        Returns:
-            A Coordinate tuple of (row, col)
-        """
-        orientation, row, column = key
-        if orientation in [
-            constants.Orientation.UP, constants.Orientation.DOWN
-        ]:
-            coordinates: typing.Coordinates = (
-                row,
-                self._coord_map[self.shape][orientation](column)
-            )
-        else:
-            coordinates: typing.Coordinates = (
-                self._coord_map[self.shape][orientation](row),
-                column
-            )
-        return coordinates
 
     @classmethod
     def define_unique_key(
@@ -207,6 +185,37 @@ class Pentagon:
                 col
             )
         return orientation, dimensions[0], dimensions[1]
+
+    @classmethod
+    def coordinates_from_key_and_shape(
+            cls,
+            key: typing.Key,
+            shape: typing.Shape
+    ) -> typing.Coordinates:
+        """
+        Return coordinates from a pentagon key.
+
+        Arguments:
+            key (typing.Key):
+            shape (typing.Shape):
+
+        Returns:
+            A Coordinate tuple of (row, col)
+        """
+        orientation, row, column = key
+        if orientation in [
+            constants.Orientation.UP, constants.Orientation.DOWN
+        ]:
+            coordinates: typing.Coordinates = (
+                row,
+                cls._coord_map[shape][orientation](column)
+            )
+        else:
+            coordinates: typing.Coordinates = (
+                cls._coord_map[shape][orientation](row),
+                column
+            )
+        return coordinates
 
     @classmethod
     def get_subclass_from_orientation(cls, orientation: str):

@@ -23,7 +23,7 @@ Orientation = str
 
 Origin = Coordinates
 
-PatternStyle = str
+Pattern = str
 
 Row = Optional[Union[int, Tuple[int, int]]]
 

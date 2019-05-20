@@ -19,6 +19,10 @@ class Orientation:
     RIGHT: typing.Orientation = 'right'
 
 
+class Pattern:
+    SQUARE = 'square'
+
+
 class Shape:
     ALPHA: typing.Shape = 'alpha'
     BETA: typing.Shape = 'beta'
@@ -27,8 +31,6 @@ class Shape:
 class Spin:
     CLOCKWISE: typing.Spin = 'clockwise'
     COUNTER_CLOCKWISE: typing.Spin = 'counter_clockwise'
-
-
 DEFAULT_OPACITY: typing.Opacity = 0.25
 DEFAULT_HEIGHT: typing.Height = 4
 DEFAULT_WIDTH: typing.Width = 4

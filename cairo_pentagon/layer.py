@@ -1,7 +1,6 @@
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple
 
 from cairo_pentagon.pentagon import Pentagon
-from cairo_pentagon.pattern import Pattern
 from cairo_pentagon.utils import constants, typing
 
 

@@ -1,8 +1,7 @@
 from typing import Dict, Optional
 
 from cairo_pentagon.pentagon import Pentagon
-from cairo_pentagon.utils.constants import Shape, Spin
-from cairo_pentagon.utils import typing
+from cairo_pentagon.utils import constants, typing
 
 # This object must contain all the data necessary to apply a pattern onto a
 # layer object.
@@ -13,7 +12,7 @@ from cairo_pentagon.utils import typing
 # If all a pattern object is doing is turning certain pentagons off and on,
 # then all it needs are the keys of the dictionary to turn off.
 
-# potential: linear transformations.
+# potential: linear transformation
 # A 90 degree rotation counter clockwise is representable as a linear
 # transformation where the vector is multiplied by [[0, 1], [-1, 0]] * [x, y]
 # [[a, c], [b, d]][x, y] = x * [a, c] + y * [b, d] = [ax + by, cx + dy]
@@ -21,16 +20,17 @@ from cairo_pentagon.utils import typing
 
 class Pattern:
 
-    _pattern_style: Optional[typing.PatternStyle] = None
+    _pattern_style: Optional[typing.Pattern] = None
 
     def __int__(
             self,
             origin: typing.Origin = None,
-            shape: typing.Shape = Shape.ALPHA,
-            spin: typing.Spin = Spin.CLOCKWISE
+            shape: typing.Shape = constants.Shape.ALPHA,
+            spin: typing.Spin = constants.Spin.CLOCKWISE
     ):
         self.origin: Optional[typing.Origin] = origin
-        self.spin: Optional[typing.Spin] = spin
+        self.shape: typing.Shape = shape
+        self.spin: typing.Spin = spin
 
     def apply(self, *args, **kwargs) -> None:
         raise NotImplementedError
@@ -38,16 +38,28 @@ class Pattern:
 
 class SquarePattern(Pattern):
 
-    _pattern_style: typing.PatternStyle = 'square'
+    _pattern_style: typing.Pattern = constants.Pattern.SQUARE
 
     def __init__(
             self,
             origin: Optional[typing.Origin] = None,
-            spin: Optional[typing.Spin] = None
+            shape: typing.Shape = constants.Shape.ALPHA,
+            spin: Optional[typing.Spin] = constants.Spin.CLOCKWISE
     ):
-        super().__init__(origin, spin)
+        super().__init__(origin, shape, spin)
+
+    def _is_visible(
+            self,
+            coordinates: typing.Coordinates,
+            orientation: typing.Orientation
+    ) -> bool:
+        pass
 
     def apply(self, pentagon_map: Dict[typing.Key, Pentagon]) -> None:
         for key, pentagon in pentagon_map.items():
-            orientation, row, col = key
-
+            coordinates = Pentagon.coordinates_from_key_and_shape(
+                key, pentagon.shape
+            )
+            pentagon.visibility = self._is_visible(
+                coordinates, pentagon.orientation
+            )
