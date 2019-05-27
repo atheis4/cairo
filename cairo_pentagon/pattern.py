@@ -1,65 +1,139 @@
-from typing import Dict, Optional
+from typing import Callable, Dict, Optional
 
-from cairo_pentagon.pentagon import Pentagon
+from cairo_pentagon import pentagon
 from cairo_pentagon.utils import constants, typing
 
 # This object must contain all the data necessary to apply a pattern onto a
 # layer object.
 
-# What should this look like? Which objects are interacting where to turn the
-# individual pentagon's visibility off and on?
-
-# If all a pattern object is doing is turning certain pentagons off and on,
-# then all it needs are the keys of the dictionary to turn off.
-
-# potential: linear transformation
-# A 90 degree rotation counter clockwise is representable as a linear
-# transformation where the vector is multiplied by [[0, 1], [-1, 0]] * [x, y]
-# [[a, c], [b, d]][x, y] = x * [a, c] + y * [b, d] = [ax + by, cx + dy]
-
 
 class Pattern:
 
-    _pattern_style: Optional[typing.Pattern] = None
+    style: Optional[typing.Pattern] = None
+    spin: Optional[typing.Spin] = None
 
-    def __int__(
-            self,
-            origin: typing.Origin = None,
-            shape: typing.Shape = constants.Shape.ALPHA,
-            spin: typing.Spin = constants.Spin.CLOCKWISE
-    ):
+    def __int__(self, origin: Optional[typing.Origin] = None):
         self.origin: Optional[typing.Origin] = origin
-        self.shape: typing.Shape = shape
-        self.spin: typing.Spin = spin
 
-    def apply(self, *args, **kwargs) -> None:
+    @property
+    def row(self):
+        return self.origin[1]
+
+    @property
+    def column(self):
+        return self.origin[0]
+
+    def apply(self, *args, **kwargs) -> bool:
         raise NotImplementedError
 
 
 class SquarePattern(Pattern):
 
-    _pattern_style: typing.Pattern = constants.Pattern.SQUARE
+    style: typing.Pattern = constants.Pattern.SQUARE
 
-    def __init__(
-            self,
-            origin: Optional[typing.Origin] = None,
-            shape: typing.Shape = constants.Shape.ALPHA,
-            spin: Optional[typing.Spin] = constants.Spin.CLOCKWISE
-    ):
-        super().__init__(origin, shape, spin)
+    def __init__(self, origin: Optional[typing.Origin] = None):
+        super().__init__(origin)
 
-    def _is_visible(
-            self,
-            coordinates: typing.Coordinates,
-            orientation: typing.Orientation
-    ) -> bool:
-        pass
+    def apply(self, p: pentagon.Pentagon) -> bool:
+        return self._quadrant_map[p.orientation](p)
 
-    def apply(self, pentagon_map: Dict[typing.Key, Pentagon]) -> None:
-        for key, pentagon in pentagon_map.items():
-            coordinates = Pentagon.coordinates_from_key_and_shape(
-                key, pentagon.shape
-            )
-            pentagon.visibility = self._is_visible(
-                coordinates, pentagon.orientation
-            )
+    @property
+    def _quadrant_map(self) -> Dict[typing.Orientation, Callable]:
+        raise NotImplementedError
+
+    @classmethod
+    def get_subclass_from_spin(cls, spin: typing.Spin):
+        """
+        Return the subclass constructor for the provided orientation.
+
+        Arguments:
+            spin (typing.Spin):
+
+        Returns:
+            Square pattern subclass constructor.
+        """
+        for pattern in cls.__subclasses__():
+            if getattr(pattern, 'spin') == spin:
+                return pattern
+
+
+class ClockwiseSquare(SquarePattern):
+
+    spin: typing.Spin = constants.Spin.CLOCKWISE
+
+    def __init__(self, origin: Optional[typing.Origin] = None):
+        super().__init__(origin=origin)
+
+    @property
+    def _quadrant_map(self) -> Dict[typing.Orientation, Callable]:
+        return {
+            constants.Orientation.RIGHT: self._quadrant_one,
+            constants.Orientation.DOWN: self._quadrant_two,
+            constants.Orientation.LEFT: self._quadrant_three,
+            constants.Orientation.UP: self._quadrant_four
+        }
+
+    def _quadrant_one(self, p) -> bool:
+        return (
+            p.row < self.row or
+            (p.column > self.column and p.row <= self.row)
+        )
+
+    def _quadrant_two(self, p) -> bool:
+        return (
+            p.column > self.column + 1 or
+            (p.row > self.row and p.column > self.column)
+        )
+
+    def _quadrant_three(self, p) -> bool:
+        return (
+            p.row > self.row + 1 or
+            (p.column <= self.column and p.row > self.row)
+        )
+
+    def _quadrant_four(self, p) -> bool:
+        return (
+            p.column < self.column or
+            (p.row <= self.row and p.column <= self.column)
+        )
+
+
+class CounterClockwiseSquare(SquarePattern):
+
+    spin: typing.Spin = constants.Spin.COUNTER_CLOCKWISE
+
+    def __init__(self, origin: Optional[typing.Origin] = None):
+        super().__init__(origin=origin)
+
+    @property
+    def _quadrant_map(self) -> Dict[typing.Orientation, Callable]:
+        return {
+            constants.Orientation.UP: self._quadrant_one,
+            constants.Orientation.RIGHT: self._quadrant_two,
+            constants.Orientation.DOWN: self._quadrant_three,
+            constants.Orientation.LEFT: self._quadrant_four
+        }
+
+    def _quadrant_one(self, p) -> bool:
+        return (
+            p.column < self.column + 1 or
+            (p.row <= self.row and p.column > self.column)
+        )
+
+    def _quadrant_two(self, p) -> bool:
+        return (
+            p.row > self.row + 1 or
+            (p.column > self.column and p.row > self.row)
+        )
+
+    def _quadrant_three(self, p) -> bool:
+        return (
+            p.column < self.column or
+            (p.row > self.row and p.column <= self.column)
+        )
+
+    def _quadrant_four(self, p) -> bool:
+        return (
+            p.row < self.row or
+            (p.column <= self.column and p.column <= self.column)
+        )
