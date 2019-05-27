@@ -1,101 +1,50 @@
-from typing import Optional
+from typing import List, Optional
 
-from cairo_pentagon.layer import Layer
-from cairo_pentagon.pattern import Pattern
+from cairo_pentagon import layer, pattern
+from cairo_pentagon.utils import constants, typing
 
 
 class Piece:
 
     # A Piece is comprised of three layers of pentagon patterns.
 
+    _num_layers: int = 3
     _seed: int = 324
 
-    def __init__(self, width: int = 12, height: int = 15):
+    def __init__(
+            self,
+            width: typing.Width = 12,
+            height: typing.Height = 15
+    ):
         self.width = width
         self.height = height
 
         # Three individual Layer objects: A, B, & C.
-        self._a_layer: Optional[Layer] = None
-        self._b_layer: Optional[Layer] = None
-        self._c_layer: Optional[Layer] = None
+        self._layers: Optional[List[layer.Layer]] = None
 
         # Three individual Pattern objects: A, B, & C.
-        self._a_pattern: Optional[Pattern] = None
-        self._b_pattern: Optional[Pattern] = None
-        self._c_pattern: Optional[Pattern] = None
-
-        # The order of the layers
-        self.layering = None
+        self._patterns: Optional[List[pattern.Pattern]] = None
 
         # The color of the background rectangle.
-        self.background_color = None
+        self.background_color: Optional[typing.Color] = None
 
-    @property
-    def a_layer(self):
-        if self._a_layer is None:
-            raise RuntimeError(
-                "Piece needs to be constructed before layers can be accessed. "
-                "Call Piece.construct_piece() first."
+    def _add_layers(self):
+        pass
+
+    def _add_patterns(self):
+        pass
+
+    def _apply_patterns(self):
+        pass
+
+    def construct_piece(
+            self,
+            shape: typing.Shape = constants.Shape.ALPHA
+    ) -> None:
+        for i in range(self._num_layers):
+            self._layers[i] = layer.Layer(
+                init_shape=shape,
+                width=self.width,
+                height=self.height,
+
             )
-        return self._a_layer
-
-    @a_layer.setter
-    def a_layer(self, value: Layer):
-        self._a_layer = value
-
-    @property
-    def a_pattern(self):
-        return self._a_pattern
-
-    @a_pattern.setter
-    def a_pattern(self, value: Pattern):
-        self._a_pattern = value
-
-    @property
-    def b_layer(self):
-        if self._c_layer is None:
-            raise RuntimeError(
-                "Piece needs to be constructed before layers can be accessed. "
-                "Call Piece.construct_piece() first."
-            )
-        return self._c_layer
-
-    @b_layer.setter
-    def b_layer(self, value: Layer):
-        self._b_layer = value
-
-    @property
-    def b_pattern(self):
-        return self._b_pattern
-
-    @b_pattern.setter
-    def b_pattern(self, value: Pattern):
-        self._b_pattern = value
-
-    @property
-    def c_layer(self):
-        if self._c_layer is None:
-            raise RuntimeError(
-                "Piece needs to be constructed before layers can be accessed. "
-                "Call Piece.construct_piece() first."
-            )
-        return self._c_layer
-
-    @c_layer.setter
-    def c_layer(self, value: Layer):
-        self._c_layer = value
-
-    @property
-    def c_pattern(self):
-        return self._c_pattern
-
-    @c_pattern.setter
-    def c_pattern(self, value: Pattern):
-        self._c_pattern = value
-
-    def construct_piece(self, pattern: Pattern, shape='alpha'):
-        for layer_name in ['a_layer', 'b_layer', 'c_layer']:
-            new_layer = Layer(shape, self.width, self.height)
-            new_layer.construct_layer()
-            pattern.apply(new_layer.pentagon_map)
-            setattr(self, layer_name, new_layer)
