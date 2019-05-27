@@ -102,7 +102,7 @@ class Layer:
             self,
             shape: typing.Shape,
             row: typing.Row,
-            col: typing.Column
+            column: typing.Column
     ) -> None:
         """Create a new cell to add to our row."""
         for orientation in self._shape_to_pentagons[shape]:
@@ -112,13 +112,17 @@ class Layer:
                 orientation=orientation,
                 shape=shape,
                 row=row,
-                col=col
+                column=column
             )
             if key not in self._pentagon_map:
                 # Get the class constructor for the pentagon we need to build.
                 factory = Pentagon.get_subclass_from_orientation(orientation)
                 # Build the pentagon.
-                pentagon: Pentagon = factory(shape=shape, row=row, col=col)
+                pentagon: Pentagon = factory(
+                    shape=shape,
+                    row=row,
+                    column=column
+                )
                 # Add to our dict of unique key to pentagon.
                 self._pentagon_map.update({key: pentagon})
 
