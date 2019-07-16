@@ -62,22 +62,7 @@ class Pentagon:
         }
     }
 
-    _coord_map: typing.CoordinateMap = {
-        constants.Shape.ALPHA: {
-            constants.Orientation.DOWN: max,
-            constants.Orientation.LEFT: max,
-            constants.Orientation.UP: min,
-            constants.Orientation.RIGHT: min
-        },
-        constants.Shape.BETA: {
-            constants.Orientation.RIGHT: max,
-            constants.Orientation.DOWN: min,
-            constants.Orientation.LEFT: min,
-            constants.Orientation.UP: max
-        }
-    }
-
-    orientation: Optional[typing.Orientation] = None
+    _orientation: Optional[typing.Orientation] = None
 
     def __init__(
             self,
@@ -96,6 +81,10 @@ class Pentagon:
             f'<{self.orientation} - row: {self.row}, col: {self.column}, '
             f'shape: {self.shape}>'
         )
+
+    @property
+    def orientation(self):
+        return self._orientation
 
     @property
     def row(self) -> Union[typing.Row, typing.CompoundDimension]:
@@ -123,34 +112,6 @@ class Pentagon:
 
     def is_visible(self) -> typing.Visibility:
         return self.visibility
-
-    def _create_compound_dimension(
-            self,
-            dimension: typing.Dimension
-    ) -> typing.CompoundDimension:
-        """
-        Creates the set of values for the 'compound' dimension (either row or
-        column).
-
-        Up and Down pentagons span more than one column, while Left and Right
-        pentagons span more than one row.
-
-        Arguments:
-            dimension (int): represents either the column or row value to be
-                'split' into a set of two column or row values.
-
-        Returns:
-            Set of two integers representing the two rows or two columns that
-            the shape exists within.
-        """
-        return (
-            dimension + self._dim_map[self.shape][self.orientation][0],
-            dimension + self._dim_map[self.shape][self.orientation][1]
-        )
-
-    def get_unique_key(self) -> typing.Key:
-        """Return the unique key of this pentagon."""
-        return self.orientation, self.row, self.column
 
     @classmethod
     def define_unique_key(
@@ -188,43 +149,12 @@ class Pentagon:
         return orientation, dimensions[0], dimensions[1]
 
     @classmethod
-    def coordinates_from_key_and_shape(
-            cls,
-            key: typing.Key,
-            shape: typing.Shape
-    ) -> typing.Coordinates:
-        """
-        Return coordinates from a pentagon key.
-
-        Arguments:
-            key (typing.Key):
-            shape (typing.Shape):
-
-        Returns:
-            A Coordinate tuple of (row, col)
-        """
-        orientation, row, column = key
-        if orientation in [
-            constants.Orientation.UP, constants.Orientation.DOWN
-        ]:
-            coordinates: typing.Coordinates = (
-                row,
-                cls._coord_map[shape][orientation](column)
-            )
-        else:
-            coordinates: typing.Coordinates = (
-                cls._coord_map[shape][orientation](row),
-                column
-            )
-        return coordinates
-
-    @classmethod
-    def get_subclass_from_orientation(cls, orientation: str):
+    def get_subclass_from_orientation(cls, orientation: typing.Orientation):
         """
         Return the subclass constructor for the provided orientation.
 
         Arguments:
-            orientation (str):
+            orientation (typing.Orientation):
 
         Returns:
             Pentagon subclass constructor.
@@ -235,52 +165,16 @@ class Pentagon:
 
 
 class UpPentagon(Pentagon):
-
-    orientation: typing.Orientation = constants.Orientation.UP
-
-    def __init__(
-            self,
-            shape: typing.Shape,
-            row: typing.Row,
-            column: typing.CompoundDimension
-    ):
-        super().__init__(shape=shape, row=row, column=column)
+    _orientation: typing.Orientation = constants.Orientation.UP
 
 
 class DownPentagon(Pentagon):
-
-    orientation: typing.Orientation = constants.Orientation.DOWN
-
-    def __init__(
-            self,
-            shape: typing.Shape,
-            row: typing.Row,
-            column: typing.CompoundDimension
-    ):
-        super().__init__(shape=shape, row=row, column=column)
+    _orientation: typing.Orientation = constants.Orientation.DOWN
 
 
 class LeftPentagon(Pentagon):
-
-    orientation: typing.Orientation = constants.Orientation.LEFT
-
-    def __init__(
-            self,
-            shape: typing.Shape,
-            row: typing.CompoundDimension,
-            column: typing.Column
-    ):
-        super().__init__(shape=shape, row=row, column=column)
+    _orientation: typing.Orientation = constants.Orientation.LEFT
 
 
 class RightPentagon(Pentagon):
-
-    orientation: typing.Orientation = constants.Orientation.RIGHT
-
-    def __init__(
-            self,
-            shape: typing.Shape,
-            row: typing.CompoundDimension,
-            column: typing.Column
-    ):
-        super().__init__(shape=shape, row=row, column=column)
+    _orientation: typing.Orientation = constants.Orientation.RIGHT

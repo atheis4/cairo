@@ -35,6 +35,11 @@ class Shape:
     BETA: typing.Shape = 'beta'
 
 
+class Space:
+    POSITIVE: typing.Shape = 'positive'
+    NEGATIVE: typing.Shape = 'negative'
+
+
 class Spin:
     CLOCKWISE: typing.Spin = 'clockwise'
     COUNTER_CLOCKWISE: typing.Spin = 'counter_clockwise'

@@ -63,13 +63,16 @@ class Layer:
     def pentagon_map(self) -> Dict[typing.Key, Pentagon]:
         return self._pentagon_map
 
+    @pentagon_map.setter
+    def pentagon_map(self, value: Optional[Dict[typing.Key, Pentagon]]) -> None:
+        self._pentagon_map = value
+
     @property
     def shape(self) -> typing.Shape:
         return self._init_shape
 
     def construct_layer(self) -> None:
-        # Check to see if we already have a pentagon mapping on this object,
-        # raise if so.
+        """Create the pentagon_map of unique key to pentagon objects."""
         if self._pentagon_map:
             raise RuntimeError(
                 "A mapping for this layer already exists, cannot construct a "
@@ -127,4 +130,4 @@ class Layer:
                 self._pentagon_map.update({key: pentagon})
 
     def reset(self):
-        pass
+        self.pentagon_map = None

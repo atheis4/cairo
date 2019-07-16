@@ -29,6 +29,8 @@ Row = Optional[Union[int, Tuple[int, int]]]
 
 Shape = str
 
+Space = str
+
 Spin = str
 
 Width = int
