@@ -20,24 +20,20 @@ class Pentagon:
     pentagon's orientation. The four different orientations of pentagons: up,
     down, left, and right.
 
-
     Shape
     -----
-    TODO: complete comment
+    Defined as either 'alpha' or 'beta', the shape describes the form of the
+    underlying lattice. Two offset, crossing lines make up the center of each
+    cell in the pentagon lattice. The 'alpha' shape has a horizontal line that
+    tilts upwards from left to right and a vertical line that tilts left to
+    right from top to bottom. The 'beta' shape is the opposite; the horizontal
+    line tilts downwards from left to right and it's vertical line tilts left
+    to right from bottom to top.
 
-
-    Simple and Compound Dimensions
-    ------------------------------
-    Each pentagon spans across either the row or column dimension.
-
-    Up and Down pentagons exist within a single row, but span two columns. For
-    these pentagons, the row is represented by a single int and the column is
-    represented by a tuple of ints (compound).
-
-    While Left and Right pentagons exist within one column and span two rows.
-    The column is represented by a single int and the row is represented by a
-    tuple of ints (compound).
-
+    Row & Column
+    ------------
+    The coordinates that describe the position of the pentagon in the row and
+    column grid that is the underlying lattice.
 
     Key
     ---
@@ -72,14 +68,14 @@ class Pentagon:
     ):
         self.shape: typing.Shape = shape
 
-        self.visibility: typing.Visibility = False
+        self.visibility: typing.Visibility = True
         self.row: Optional[typing.Row] = row
         self.column: Optional[typing.Column] = column
 
     def __repr__(self) -> str:
         return (
             f'<{self.orientation} - row: {self.row}, col: {self.column}, '
-            f'shape: {self.shape}>'
+            f'shape: {self.shape}, visibility: {self.visibility}>'
         )
 
     @property
@@ -160,7 +156,7 @@ class Pentagon:
             Pentagon subclass constructor.
         """
         for pentagon in cls.__subclasses__():
-            if getattr(pentagon, 'orientation') == orientation:
+            if getattr(pentagon, '_orientation') == orientation:
                 return pentagon
 
 

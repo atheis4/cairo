@@ -1,7 +1,8 @@
+import random
 from typing import List, Optional
 
 from cairo_pentagon import layer, pattern
-from cairo_pentagon.utils import constants, typing
+from cairo_pentagon.utils import constants, randomizer, typing
 
 
 class Piece:
@@ -27,24 +28,60 @@ class Piece:
 
         # The color of the background rectangle.
         self.background_color: Optional[typing.Color] = None
+        self.randomizer = randomizer.Randomizer(seed=self._seed)
 
     def _add_layers(self):
-        pass
+        if self._layers:
+            raise RuntimeError(
+                "Layers already exist, cannot overwrite."
+            )
+        self._layers = []
+        for i in range(3):
+            new_layer = layer.Layer(height=self.height, width=self.width)
+            new_layer.construct_layer()
+            self._layers.append(new_layer)
 
     def _add_patterns(self):
-        pass
+        if self._patterns:
+            raise RuntimeError(
+                "Patterns already exist, cannot overwrite."
+            )
+        self._patterns = []
+        for i in range(3):
+            factory = pattern.SquarePattern.get_subclass_from_spin(
+                self.randomizer.get_random_attribute('spin')
+            )
+            new_pattern = factory(
+                origin=self.randomizer.get_origin(
+                    height=self.height, width=self.width
+                ),
+                space=self.randomizer.get_random_attribute('space')
+            )
+            self._patterns.append(new_pattern)
 
-    def _apply_patterns(self):
-        pass
+    def apply_patterns(self):
+        for this_layer, this_pattern in zip(self._layers, self._patterns):
+            for pentagon in this_layer.pentagon_map.values():
+                pentagon.visibility = this_pattern.apply(pentagon)
 
     def construct_piece(
             self,
             shape: typing.Shape = constants.Shape.ALPHA
     ) -> None:
-        for i in range(self._num_layers):
-            self._layers[i] = layer.Layer(
-                init_shape=shape,
-                width=self.width,
-                height=self.height,
+        pass
 
-            )
+    @classmethod
+    def manual_build(
+            cls,
+            height: int,
+            width: int,
+            layers: List[layer.Layer],
+            patterns: List[typing.Pattern],
+            background_color: typing.Color
+    ):
+        piece = cls(width=width, height=height)
+        piece.background_color = background_color
+        piece._layers = layers
+        piece._patterns = patterns
+        piece.apply_patterns()
+        return piece

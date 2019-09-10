@@ -34,15 +34,21 @@ class Shape:
     ALPHA: typing.Shape = 'alpha'
     BETA: typing.Shape = 'beta'
 
+    SHAPES: List[typing.Shape] = [ALPHA, BETA]
+
 
 class Space:
     POSITIVE: typing.Shape = 'positive'
     NEGATIVE: typing.Shape = 'negative'
 
+    SPACES: List[typing.Shape] = [POSITIVE, NEGATIVE]
+
 
 class Spin:
     CLOCKWISE: typing.Spin = 'clockwise'
     COUNTER_CLOCKWISE: typing.Spin = 'counter_clockwise'
+
+    SPINS: List[typing.Spin] = [CLOCKWISE, COUNTER_CLOCKWISE]
 
 
 DEFAULT_OPACITY: typing.Opacity = 0.25

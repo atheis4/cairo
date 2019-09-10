@@ -171,3 +171,6 @@ class CounterClockwiseSquare(SquarePattern):
             p.row < self.row or
             (p.column <= self.column and p.column <= self.column)
         )
+
+# TODO: create a container for all pattern types and allow randomized access
+# TODO: to them.
