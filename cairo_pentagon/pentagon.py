@@ -43,28 +43,29 @@ class Pentagon:
     we need to make it. This allows us to reference the same pentagon object
     across a single frame layer.
     """
+
     _dim_map: typing.DimensionMap = {
         constants.Shape.ALPHA: {
             constants.Orientation.DOWN: constants.DimensionalOffset.NEGATIVE,
             constants.Orientation.LEFT: constants.DimensionalOffset.NEGATIVE,
             constants.Orientation.UP: constants.DimensionalOffset.POSITIVE,
-            constants.Orientation.RIGHT: constants.DimensionalOffset.POSITIVE
+            constants.Orientation.RIGHT: constants.DimensionalOffset.POSITIVE,
         },
         constants.Shape.BETA: {
             constants.Orientation.RIGHT: constants.DimensionalOffset.NEGATIVE,
             constants.Orientation.DOWN: constants.DimensionalOffset.POSITIVE,
             constants.Orientation.LEFT: constants.DimensionalOffset.POSITIVE,
-            constants.Orientation.UP: constants.DimensionalOffset.NEGATIVE
-        }
+            constants.Orientation.UP: constants.DimensionalOffset.NEGATIVE,
+        },
     }
 
     _orientation: Optional[typing.Orientation] = None
 
     def __init__(
-            self,
-            shape: typing.Shape = constants.Shape.ALPHA,
-            row: typing.Row = None,
-            column: typing.Column = None
+        self,
+        shape: typing.Shape = constants.Shape.ALPHA,
+        row: typing.Row = None,
+        column: typing.Column = None,
     ):
         self.shape: typing.Shape = shape
 
@@ -74,8 +75,8 @@ class Pentagon:
 
     def __repr__(self) -> str:
         return (
-            f'<{self.orientation} - row: {self.row}, col: {self.column}, '
-            f'shape: {self.shape}, visibility: {self.visibility}>'
+            f"<{self.orientation} - row: {self.row}, col: {self.column}, "
+            f"shape: {self.shape}, visibility: {self.visibility}>"
         )
 
     @property
@@ -111,11 +112,11 @@ class Pentagon:
 
     @classmethod
     def define_unique_key(
-            cls,
-            shape: typing.Shape,
-            orientation: typing.Orientation,
-            row: typing.Dimension,
-            column: typing.Dimension
+        cls,
+        shape: typing.Shape,
+        orientation: typing.Orientation,
+        row: typing.Dimension,
+        column: typing.Dimension,
     ) -> typing.Key:
         """
         Provided an orientation, a shape, a row, and a column, return the
@@ -133,14 +134,18 @@ class Pentagon:
         if orientation in constants.Orientation.VERTICAL:
             dimensions: Tuple[typing.Dimension, typing.Dimension] = (
                 row,
-                (column + cls._dim_map[shape][orientation][0],
-                 column + cls._dim_map[shape][orientation][1])
+                (
+                    column + cls._dim_map[shape][orientation][0],
+                    column + cls._dim_map[shape][orientation][1],
+                ),
             )
         else:
             dimensions: Tuple[typing.Dimension, typing.Dimension] = (
-                (row + cls._dim_map[shape][orientation][0],
-                 row + cls._dim_map[shape][orientation][1]),
-                column
+                (
+                    row + cls._dim_map[shape][orientation][0],
+                    row + cls._dim_map[shape][orientation][1],
+                ),
+                column,
             )
         return orientation, dimensions[0], dimensions[1]
 
@@ -156,7 +161,7 @@ class Pentagon:
             Pentagon subclass constructor.
         """
         for pentagon in cls.__subclasses__():
-            if getattr(pentagon, '_orientation') == orientation:
+            if getattr(pentagon, "_orientation") == orientation:
                 return pentagon
 
 

@@ -13,11 +13,11 @@ _SEED = 324
 class Randomizer:
 
     _attribute_map = {
-        'spin': constants.Spin.SPINS,
-        'shape': constants.Shape.SHAPES,
-        'space': constants.Space.SPACES
+        "spin": constants.Spin.SPINS,
+        "shape": constants.Shape.SHAPES,
+        "space": constants.Space.SPACES,
     }
-    _colors = constants.Colors.RGB.copy()
+    _colors = [constants.Colors.RED, constants.Colors.GREEN, constants.Colors.BLUE]
 
     def __init__(self, seed: Optional[int] = None):
         self.seed = seed if seed else _SEED
@@ -37,9 +37,7 @@ class Randomizer:
 
     def get_color(self):
         if not self._colors:
-            raise RuntimeError(
-                "All colors have been exhausted."
-            )
+            raise RuntimeError("All colors have been exhausted.")
         return self._colors.pop()
 
     @staticmethod
